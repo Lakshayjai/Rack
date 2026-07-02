@@ -5,6 +5,8 @@
 export interface AppConfig {
   port: number;
   webOrigin: string;
+  /** Public base URL of this API, used to build local upload URLs. */
+  publicApiUrl: string;
   jwt: {
     secret: string;
     expiresIn: string;
@@ -24,6 +26,8 @@ export interface AppConfig {
 export default (): AppConfig => ({
   port: parseInt(process.env.PORT ?? '3005', 10),
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:3000',
+  publicApiUrl:
+    process.env.PUBLIC_API_URL ?? `http://localhost:${process.env.PORT ?? '3005'}`,
   jwt: {
     secret: process.env.JWT_SECRET ?? 'insecure-dev-secret',
     expiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
