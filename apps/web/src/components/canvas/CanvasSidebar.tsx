@@ -87,8 +87,8 @@ export function CanvasSidebar({
                 );
                 e.dataTransfer.effectAllowed = "copy";
               }}
-              onDoubleClick={() => onAdd(item)}
-              title="Drag onto the canvas, or double-click to add"
+              onClick={() => onAdd(item)}
+              title="Tap to add, or drag onto the canvas"
               className="relative aspect-square cursor-grab overflow-hidden rounded-lg border border-border bg-bg-secondary active:cursor-grabbing"
             >
               <Image

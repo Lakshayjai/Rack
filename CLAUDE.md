@@ -33,10 +33,15 @@ Environment: copy `apps/api/.env.example` → `apps/api/.env` (fill Cloudinary),
 
 ## Build phases
 1. **Foundation** ✅ — monorepo, Prisma, auth (register/login/logout/me), dashboard shell, auth pages, design system.
-2. **Wardrobe core** — items module, image pipeline (sharp → rembg → Cloudinary), wardrobe grid/upload/filters.
-3. **Designer canvas** — Fabric.js canvas, drag-drop, zones, layers, undo/redo, save/load, export PNG.
-4. **Outfit gallery** — gallery grid, calendar (worn dates), detail modal, sort.
-5. **Polish** — skeletons, error boundaries, toasts, mobile/touch, perf, README.
+2. **Wardrobe core** ✅ — items module, image pipeline (sharp → rembg → Cloudinary/local), wardrobe grid/upload/filters.
+3. **Designer canvas** ✅ — Fabric.js v6 canvas, drag-drop, zones, layers, undo/redo, save/load, export PNG.
+4. **Outfit gallery** ✅ — gallery grid, calendar (worn dates), detail modal, sort.
+5. **Polish** ✅ — skeletons, error boundary, not-found, toasts, mobile bottom-nav, canvas CORS for local uploads, README.
+
+## Storage note
+Images use Cloudinary when `CLOUDINARY_*` is configured, otherwise a local-disk fallback served at `/uploads`
+(with `Access-Control-Allow-Origin: *` so the Fabric canvas can load + export them untainted). Images are added with
+`crossOrigin: 'anonymous'` so reloaded/exported canvases aren't tainted.
 
 ## Conventions
 - TypeScript strict in both apps; avoid `any` (comment when unavoidable).

@@ -14,7 +14,12 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix('api');
 
   // Serve locally-stored images (used when Cloudinary is not configured) at /uploads.
-  app.useStaticAssets(LOCAL_UPLOAD_DIR, { prefix: '/uploads' });
+  // Set an open CORS header so the Fabric.js canvas can load these images with
+  // crossOrigin="anonymous" and export/undo without tainting the canvas.
+  app.useStaticAssets(LOCAL_UPLOAD_DIR, {
+    prefix: '/uploads',
+    setHeaders: (res) => res.setHeader('Access-Control-Allow-Origin', '*'),
+  });
 
   app.use(cookieParser());
 
