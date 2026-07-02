@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  username      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  clothingItems ClothingItem[]
+  outfits       Outfit[]
+}
+
+model ClothingItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  thumbUrl  String?
+  category  String // TOP | BOTTOM | SHOE | ACCESSORY | OUTERWEAR
+  colors    String[]
+  styles    String[] // casual | formal | streetwear | smart-casual | sport
+  occasions String[] // daily | work | party | gym | date
+  brand     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Outfit {
+  id               String     @id @default(uuid())
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  description      String?
+  canvasState      Json
+  exportedImageUrl String?
+  itemIds          String[]
+  wornDates        DateTime[]
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@index([userId])
+}

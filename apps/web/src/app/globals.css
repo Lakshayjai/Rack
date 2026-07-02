@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Dark mode is the DEFAULT theme (applied on :root).
+ * Adding the `.light` class on <html> switches to the light palette.
+ */
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1e1e1e;
+  --border-color: #2a2a2a;
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a0;
+  --text-muted: #555555;
+  --accent-gold: #c9a96e;
+  --accent-gold-dim: #8b7355;
+  --accent-blue: #4a90d9;
+  --success: #4caf50;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --canvas-bg: #1e1e1e;
+}
+
+.light {
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f2f2f2;
+  --border-color: #e0e0e0;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+  --accent-gold: #9a7640;
+  --accent-gold-dim: #7a5d33;
+  --canvas-bg: #f9f9f9;
+}
+
+/* Map tokens + fonts into Tailwind's theme so utilities (bg-bg-secondary, text-accent-gold, font-display) generate. */
+@theme inline {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-border: var(--border-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-gold-dim: var(--accent-gold-dim);
+  --color-accent-blue: var(--accent-blue);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+
+  --font-display: var(--font-cinzel), serif;
+  --font-accent: var(--font-surfer), cursive;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Category badge palette (fixed hues regardless of theme). */
+.badge-TOP { background: #dbeafe; color: #3b82f6; }
+.badge-BOTTOM { background: #ede9fe; color: #7c3aed; }
+.badge-SHOE { background: #ffedd5; color: #ea580c; }
+.badge-ACCESSORY { background: #fce7f3; color: #db2777; }
+.badge-OUTERWEAR { background: #dcfce7; color: #16a34a; }
+
+/* Subtle scrollbars to match the dark, editorial aesthetic. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Motion — kept subtle; used by page/modal/card transitions. */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.2s ease-out; }
+.animate-modal-in { animation: modal-in 0.2s ease-out; }
+.animate-toast-in { animation: toast-in 0.2s ease-out; }

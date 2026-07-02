@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# env — never commit secrets
+.env
+.env.*
+!.env.example
+
+# builds
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# prisma
+apps/api/prisma/*.db
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# os / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# uploads / temp
+uploads/
+tmp/
