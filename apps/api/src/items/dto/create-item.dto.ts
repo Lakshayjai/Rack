@@ -30,6 +30,12 @@ export class CreateItemDto {
   @IsIn(CATEGORIES)
   category!: Category;
 
+  /** Gender-aware garment type, e.g. "t-shirt", "jeans", "heels". */
+  @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  subtype?: string;
+
   @IsArray()
   @IsString({ each: true })
   @Transform(toStringArray)

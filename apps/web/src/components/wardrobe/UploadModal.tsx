@@ -3,13 +3,14 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { UploadCloud, Loader2 } from "lucide-react";
-import { CATEGORIES, STYLES, OCCASIONS, type Category } from "shared-types";
+import { STYLES, OCCASIONS, type Category } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
-import { CATEGORY_ICONS, PRESET_COLORS } from "@/lib/wardrobe-constants";
+import { useAuth } from "@/hooks/useAuth";
+import { CATEGORY_ICONS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,11 @@ export function UploadModal({
 }) {
   const toast = useToast();
   const { uploadItem } = useWardrobe();
+  const { user } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Categories and garment types tailored to the wardrobe owner.
+  const categories = categoriesFor(user?.gender);
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -38,6 +43,7 @@ export function UploadModal({
   const [uploading, setUploading] = useState(false);
 
   const [category, setCategory] = useState<Category | null>(null);
+  const [subtype, setSubtype] = useState<string | null>(null);
   const [colors, setColors] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
   const [occasions, setOccasions] = useState<string[]>([]);
@@ -48,6 +54,7 @@ export function UploadModal({
     setFile(null);
     setPreviewUrl(null);
     setCategory(null);
+    setSubtype(null);
     setColors([]);
     setStyles([]);
     setOccasions([]);
@@ -77,7 +84,15 @@ export function UploadModal({
     if (!file || !category) return;
     setUploading(true);
     try {
-      await uploadItem(file, { category, colors, styles, occasions, brand, notes });
+      await uploadItem(file, {
+        category,
+        subtype: subtype ?? undefined,
+        colors,
+        styles,
+        occasions,
+        brand,
+        notes,
+      });
       toast.success("Item added to your wardrobe");
       handleClose(false);
     } catch (err) {
@@ -150,15 +165,18 @@ export function UploadModal({
 
         {/* Category (required) */}
         <Field label="Category" required>
-          <div className="grid grid-cols-5 gap-2">
-            {CATEGORIES.map((cat) => {
+          <div className={cn("grid gap-2", categories.length > 5 ? "grid-cols-3 sm:grid-cols-6" : "grid-cols-5")}>
+            {categories.map((cat) => {
               const Icon = CATEGORY_ICONS[cat];
               const active = category === cat;
               return (
                 <button
                   key={cat}
                   type="button"
-                  onClick={() => setCategory(cat)}
+                  onClick={() => {
+                    setCategory(cat);
+                    setSubtype(null); // types depend on the category
+                  }}
                   className={cn(
                     "flex flex-col items-center gap-1.5 border py-3 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
                     active
@@ -173,6 +191,29 @@ export function UploadModal({
             })}
           </div>
         </Field>
+
+        {/* Garment type — depends on category */}
+        {category && subtypesFor(user?.gender, category).length > 0 && (
+          <Field label="Type">
+            <div className="flex flex-wrap gap-2">
+              {subtypesFor(user?.gender, category).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setSubtype((cur) => (cur === t ? null : t))}
+                  className={cn(
+                    "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
+                    subtype === t
+                      ? "border-text-primary bg-text-primary text-bg-primary"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </Field>
+        )}
 
         {/* Colors */}
         <Field label="Colors">

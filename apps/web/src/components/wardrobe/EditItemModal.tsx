@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CATEGORIES, STYLES, OCCASIONS, type Category, type ClothingItem } from "shared-types";
+import { STYLES, OCCASIONS, type Category, type ClothingItem } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
-import { CATEGORY_ICONS, PRESET_COLORS } from "@/lib/wardrobe-constants";
+import { useAuth } from "@/hooks/useAuth";
+import { CATEGORY_ICONS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -25,9 +26,13 @@ export function EditItemModal({
 }) {
   const toast = useToast();
   const { editItem } = useWardrobe();
+  const { user } = useAuth();
   const [saving, setSaving] = useState(false);
 
+  const categories = categoriesFor(user?.gender);
+
   const [category, setCategory] = useState<Category>("TOP");
+  const [subtype, setSubtype] = useState<string | null>(null);
   const [colors, setColors] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
   const [occasions, setOccasions] = useState<string[]>([]);
@@ -38,6 +43,7 @@ export function EditItemModal({
   useEffect(() => {
     if (!item) return;
     setCategory(item.category);
+    setSubtype(item.subtype);
     setColors(item.colors);
     setStyles(item.styles);
     setOccasions(item.occasions);
@@ -49,7 +55,15 @@ export function EditItemModal({
     if (!item) return;
     setSaving(true);
     try {
-      await editItem(item.id, { category, colors, styles, occasions, brand, notes });
+      await editItem(item.id, {
+        category,
+        subtype: subtype ?? undefined,
+        colors,
+        styles,
+        occasions,
+        brand,
+        notes,
+      });
       toast.success("Item updated");
       onOpenChange(false);
     } catch (err) {
@@ -64,14 +78,17 @@ export function EditItemModal({
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Category</span>
-          <div className="grid grid-cols-5 gap-2">
-            {CATEGORIES.map((cat) => {
+          <div className={cn("grid gap-2", categories.length > 5 ? "grid-cols-3 sm:grid-cols-6" : "grid-cols-5")}>
+            {categories.map((cat) => {
               const Icon = CATEGORY_ICONS[cat];
               return (
                 <button
                   key={cat}
                   type="button"
-                  onClick={() => setCategory(cat)}
+                  onClick={() => {
+                    setCategory(cat);
+                    setSubtype(null); // types depend on the category
+                  }}
                   className={cn(
                     "flex flex-col items-center gap-1.5 border py-3 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
                     category === cat
@@ -86,6 +103,29 @@ export function EditItemModal({
             })}
           </div>
         </div>
+
+        {subtypesFor(user?.gender, category).length > 0 && (
+          <div className="flex flex-col gap-2">
+            <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Type</span>
+            <div className="flex flex-wrap gap-2">
+              {subtypesFor(user?.gender, category).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setSubtype((cur) => (cur === t ? null : t))}
+                  className={cn(
+                    "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
+                    subtype === t
+                      ? "border-text-primary bg-text-primary text-bg-primary"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Colors</span>

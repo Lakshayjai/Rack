@@ -29,9 +29,9 @@ export function ClothingCard({
 
       <CategoryBadge category={item.category} className="absolute right-0 top-0" />
 
-      {item.brand && (
-        <p className="absolute bottom-2 left-3 text-[10px] uppercase tracking-[0.18em] text-text-muted">
-          {item.brand}
+      {(item.subtype || item.brand) && (
+        <p className="absolute bottom-2 left-3 right-3 truncate text-[10px] uppercase tracking-[0.18em] text-text-muted">
+          {[item.subtype, item.brand].filter(Boolean).join(" · ")}
         </p>
       )}
 

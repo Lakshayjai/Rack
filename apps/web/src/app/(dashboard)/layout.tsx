@@ -3,6 +3,7 @@ import { AuthGuard } from "@/components/layout/AuthGuard";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { BottomNav } from "@/components/layout/BottomNav";
+import { GenderPrompt } from "@/components/layout/GenderPrompt";
 
 /** Authenticated dashboard shell: sidebar + topbar + scrollable main + mobile bottom nav. */
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -15,6 +16,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <main className="flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6">{children}</main>
         </div>
         <BottomNav />
+        <GenderPrompt />
       </div>
     </AuthGuard>
   );

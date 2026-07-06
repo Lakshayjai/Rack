@@ -68,10 +68,12 @@ body {
 /* Category badges — muted couture tones. */
 .badge-TOP { background: #e7edf4; color: #44576e; }
 .badge-BOTTOM { background: #ece7f1; color: #5f4b73; }
+.badge-DRESS { background: #f6e6ee; color: #9a4d74; }
 .badge-SHOE { background: #f3e7db; color: #8a5a33; }
 .badge-ACCESSORY { background: #f4e6e6; color: #96524f; }
 .badge-OUTERWEAR { background: #e7ede5; color: #4a6b52; }
 
+.dark .badge-DRESS { background: #38222d; color: #d8a0bd; }
 .dark .badge-TOP { background: #26303c; color: #a9bdd3; }
 .dark .badge-BOTTOM { background: #2e2836; color: #c3b3d6; }
 .dark .badge-SHOE { background: #38291c; color: #d9ae87; }

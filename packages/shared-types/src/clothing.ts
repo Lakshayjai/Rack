@@ -2,8 +2,8 @@
  * Shared clothing domain types, used by both the NestJS API and the Next.js web app.
  */
 
-/** Wardrobe item categories. */
-export const CATEGORIES = ['TOP', 'BOTTOM', 'SHOE', 'ACCESSORY', 'OUTERWEAR'] as const;
+/** Wardrobe item categories. DRESS is shown only for female users in the UI. */
+export const CATEGORIES = ['TOP', 'BOTTOM', 'DRESS', 'SHOE', 'ACCESSORY', 'OUTERWEAR'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 /** Style tags an item can carry. */
@@ -21,6 +21,8 @@ export interface ClothingItem {
   imageUrl: string;
   thumbUrl: string | null;
   category: Category;
+  /** Gender-aware garment type, e.g. "t-shirt", "shirt", "heels". */
+  subtype: string | null;
   colors: string[];
   styles: string[];
   occasions: string[];

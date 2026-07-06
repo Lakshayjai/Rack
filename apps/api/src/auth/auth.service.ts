@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import type { JwtPayload, PublicUser } from 'shared-types';
+import type { Gender, JwtPayload, PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -26,6 +26,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       username: user.username,
+      gender: (user.gender as Gender | null) ?? null,
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
     };
@@ -45,7 +46,7 @@ export class AuthService {
     }
     const hashed = await bcrypt.hash(dto.password, BCRYPT_SALT_ROUNDS);
     const user = await this.prisma.user.create({
-      data: { email: dto.email, username: dto.username, password: hashed },
+      data: { email: dto.email, username: dto.username, password: hashed, gender: dto.gender },
     });
     return this.toPublicUser(user);
   }

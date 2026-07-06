@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import type { PublicUser } from "shared-types";
+import type { Gender, PublicUser } from "shared-types";
 import { api, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -11,6 +11,7 @@ interface Credentials {
 }
 interface RegisterInput extends Credentials {
   username: string;
+  gender: Gender;
 }
 
 /**
@@ -57,5 +58,15 @@ export function useAuth() {
     setUser(null);
   }, [setUser]);
 
-  return { user, loading, refresh, login, register, logout };
+  /** Persist profile preferences (e.g. the gender that tailors the UI). */
+  const updateProfile = useCallback(
+    async (gender: Gender) => {
+      const me = await api.patch<PublicUser>("/users/me", { gender });
+      setUser(me);
+      return me;
+    },
+    [setUser],
+  );
+
+  return { user, loading, refresh, login, register, logout, updateProfile };
 }

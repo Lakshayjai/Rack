@@ -12,6 +12,7 @@ model User {
   email         String         @unique
   password      String
   username      String
+  gender        String? // male | female — tailors category/type options in the UI
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   clothingItems ClothingItem[]
@@ -24,7 +25,8 @@ model ClothingItem {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageUrl  String
   thumbUrl  String?
-  category  String // TOP | BOTTOM | SHOE | ACCESSORY | OUTERWEAR
+  category  String // TOP | BOTTOM | DRESS | SHOE | ACCESSORY | OUTERWEAR
+  subtype   String? // e.g. t-shirt | shirt | jeans | heels — gender-aware garment type
   colors    String[]
   styles    String[] // casual | formal | streetwear | smart-casual | sport
   occasions String[] // daily | work | party | gym | date

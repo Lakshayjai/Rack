@@ -7,11 +7,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname, "../../"),
   },
-  // Allow next/image to load background-removed clothing photos from Cloudinary.
+  // Serve images as-is: Next 16's optimizer rejects http://localhost upstreams
+  // (used by the local-storage fallback), and Cloudinary URLs are already
+  // transformed/sized at the CDN — so optimization adds nothing here.
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com" },
-      // Local storage fallback (when Cloudinary is not configured).
       { protocol: "http", hostname: "localhost", port: "3005" },
     ],
   },

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import type { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import type { JwtPayload, PublicUser } from 'shared-types';
+import type { Gender, JwtPayload, PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 
 /** Reads the JWT from the HTTP-only `access_token` cookie. */
@@ -38,6 +38,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       id: user.id,
       email: user.email,
       username: user.username,
+      gender: (user.gender as Gender | null) ?? null,
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
     };

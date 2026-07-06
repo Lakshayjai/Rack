@@ -29,6 +29,7 @@ export class ItemsService {
       imageUrl: item.imageUrl,
       thumbUrl: item.thumbUrl,
       category: item.category as Category,
+      subtype: item.subtype,
       colors: item.colors,
       styles: item.styles,
       occasions: item.occasions,
@@ -51,6 +52,7 @@ export class ItemsService {
         imageUrl,
         thumbUrl,
         category: dto.category,
+        subtype: dto.subtype ?? null,
         colors: dto.colors,
         styles: dto.styles,
         occasions: dto.occasions,
@@ -70,6 +72,7 @@ export class ItemsService {
       const term = query.search;
       where.OR = [
         { brand: { contains: term, mode: 'insensitive' } },
+        { subtype: { contains: term, mode: 'insensitive' } },
         { notes: { contains: term, mode: 'insensitive' } },
         { colors: { has: term.toLowerCase() } },
       ];
@@ -101,6 +104,7 @@ export class ItemsService {
       where: { id },
       data: {
         ...(dto.category !== undefined && { category: dto.category }),
+        ...(dto.subtype !== undefined && { subtype: dto.subtype }),
         ...(dto.colors !== undefined && { colors: dto.colors }),
         ...(dto.styles !== undefined && { styles: dto.styles }),
         ...(dto.occasions !== undefined && { occasions: dto.occasions }),

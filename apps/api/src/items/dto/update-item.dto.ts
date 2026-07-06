@@ -23,6 +23,11 @@ export class UpdateItemDto {
   category?: Category;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(40)
+  subtype?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @Transform(toStringArray)

@@ -3,9 +3,11 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Search, Shirt } from "lucide-react";
-import { CATEGORIES, type Category, type ClothingItem } from "shared-types";
+import { type Category, type ClothingItem } from "shared-types";
 import { thumb } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { categoriesFor } from "@/lib/wardrobe-constants";
 
 export const DRAG_MIME = "application/x-wardrobe-item";
 
@@ -20,6 +22,8 @@ export function CanvasSidebar({
   items: ClothingItem[];
   onAdd: (item: ClothingItem) => void;
 }) {
+  const { user } = useAuth();
+  const categories = categoriesFor(user?.gender);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<Category | "ALL">("ALL");
 
@@ -31,6 +35,7 @@ export function CanvasSidebar({
           const t = search.toLowerCase();
           return (
             i.brand?.toLowerCase().includes(t) ||
+            i.subtype?.toLowerCase().includes(t) ||
             i.colors.some((c) => c.includes(t)) ||
             i.category.toLowerCase().includes(t)
           );
@@ -53,7 +58,7 @@ export function CanvasSidebar({
       </div>
 
       <div className="flex flex-wrap gap-1.5">
-        {(["ALL", ...CATEGORIES] as const).map((c) => (
+        {(["ALL", ...categories] as const).map((c) => (
           <button
             key={c}
             onClick={() => setCategory(c)}

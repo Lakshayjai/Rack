@@ -21,6 +21,7 @@ interface PaginatedItems {
 
 export interface UploadMetadata {
   category: Category;
+  subtype?: string;
   colors: string[];
   styles: string[];
   occasions: string[];
@@ -56,6 +57,7 @@ export function useWardrobe() {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("category", meta.category);
+      if (meta.subtype) fd.append("subtype", meta.subtype);
       fd.append("colors", JSON.stringify(meta.colors));
       fd.append("styles", JSON.stringify(meta.styles));
       fd.append("occasions", JSON.stringify(meta.occasions));
