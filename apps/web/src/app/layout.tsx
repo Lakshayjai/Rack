@@ -1,43 +1,44 @@
 import type { Metadata } from "next";
-import { Cinzel, Original_Surfer, Inter } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
 
-// Display / headings / logo — elegant Roman serif.
+// Display — classic Roman capitals for the wordmark and page titles.
 const cinzel = Cinzel({
   variable: "--font-cinzel",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
-
-// Relaxed accent face for select labels / flourishes.
-const surfer = Original_Surfer({
-  variable: "--font-surfer",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-// Body / UI — highly readable sans.
-const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
 
+// Editorial serif — italics for taglines, descriptions, refined accents.
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+});
+
+// Body / UI — geometric sans with a classic, couture feel.
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
+
 export const metadata: Metadata = {
-  title: "Wardrobe — Design your outfits",
+  title: "Wardrobe — The Private Atelier",
   description:
-    "A minimal, self-hosted wardrobe manager and drag-and-drop outfit designer.",
+    "A private wardrobe atelier — curate your pieces and compose outfits on an interactive canvas.",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // Dark mode is the default theme (no `.light` class present).
+    // Light ivory is the default theme (`.dark` switches to the evening palette).
     <html
       lang="en"
-      className={`${cinzel.variable} ${surfer.variable} ${inter.variable} h-full antialiased`}
+      className={`${cinzel.variable} ${cormorant.variable} ${jost.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-bg-primary text-text-primary">
         <ToastProvider>{children}</ToastProvider>

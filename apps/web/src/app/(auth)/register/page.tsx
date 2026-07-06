@@ -50,7 +50,7 @@ export default function RegisterPage() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 rounded-2xl border border-border bg-bg-secondary p-6"
+      className="flex flex-col gap-6 border border-border bg-bg-secondary p-8 shadow-plume"
     >
       <Input
         id="username"
@@ -79,12 +79,12 @@ export default function RegisterPage() {
         {...register("password")}
       />
       <Button type="submit" loading={isSubmitting} className="mt-2 w-full">
-        Create account
+        Begin
       </Button>
-      <p className="text-center text-sm text-text-secondary">
-        Already have an account?{" "}
-        <Link href="/login" className="text-accent-gold hover:underline">
-          Log in
+      <p className="text-center font-serif text-base italic text-text-secondary">
+        Already a member?{" "}
+        <Link href="/login" className="text-accent-gold underline-offset-4 hover:underline">
+          Sign in
         </Link>
       </p>
     </form>

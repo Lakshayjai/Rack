@@ -15,8 +15,9 @@ A free, self-hosted **wardrobe manager + outfit designer**. Users upload clothin
 - API runs on **port 3005** (spec said 3001, but another local app occupies 3001). Web on **3000**.
 - Auth: JWT in an HTTP-only cookie (`access_token`), bcrypt 12 rounds. API and web are different origins; the authoritative auth check is a client call to `/auth/me` in `AuthGuard` (not middleware), since the cookie is host-scoped to `localhost`.
 - All API routes are under `/api`; every route except `/auth/login` and `/auth/register` requires `JwtAuthGuard`; every query is scoped to `req.user.id`.
-- Fonts (override of original spec): **Cinzel** (display/headings/logo), **Original Surfer** (accent), **Inter** (body). Loaded in `apps/web/src/app/layout.tsx`.
-- Design tokens + dark-default/light theme live in `apps/web/src/app/globals.css` (`.light` class toggles light mode via `useTheme`).
+- Design system ("Atelier", redesigned 2026-07): **light-luxury ivory palette is the DEFAULT** (warm ivory surfaces, hairline taupe borders, ink text, antique-gold accent), sharp editorial edges (rounded-none), uppercase letter-spaced labels, `shadow-plume` soft shadows, `.eyebrow`/`.rule-gold` helpers. `.dark` class on `<html>` switches to an optional espresso "evening" theme via `useTheme`.
+- Fonts: **Cinzel** (display/wordmark/titles), **Cormorant Garamond** (editorial serif italics — `font-serif`), **Jost** (body/UI). Loaded in `apps/web/src/app/layout.tsx`.
+- Voice: pages are titled editorially — Wardrobe = "The Collection", Designer = "Composition Room", Outfits = "The Lookbook".
 
 ## Commands
 ```bash

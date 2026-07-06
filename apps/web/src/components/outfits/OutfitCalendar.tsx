@@ -45,7 +45,7 @@ export function OutfitCalendar({
     outfits.filter((o) => o.wornDates.some((d) => isSameDay(new Date(d), day)));
 
   return (
-    <div className="rounded-2xl border border-border bg-bg-secondary p-4">
+    <div className="border border-border bg-bg-secondary p-6 shadow-plume">
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setMonth((m) => addMonths(m, -1))}
@@ -54,7 +54,9 @@ export function OutfitCalendar({
         >
           <ChevronLeft size={20} />
         </button>
-        <h2 className="font-display text-xl text-text-primary">{format(month, "MMMM yyyy")}</h2>
+        <h2 className="font-display text-xl tracking-[0.14em] text-text-primary">
+          {format(month, "MMMM yyyy")}
+        </h2>
         <button
           onClick={() => setMonth((m) => addMonths(m, 1))}
           className="rounded-lg p-1.5 text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
@@ -80,8 +82,10 @@ export function OutfitCalendar({
               key={day.toISOString()}
               onClick={() => setPickDate(day)}
               className={cn(
-                "flex min-h-[64px] flex-col gap-1 rounded-lg border p-1 text-left transition-colors",
-                inMonth ? "border-border hover:border-accent-gold/50" : "border-transparent opacity-40",
+                "flex min-h-[64px] flex-col gap-1 border p-1.5 text-left transition-colors duration-200",
+                inMonth
+                  ? "border-border bg-white hover:border-accent-gold"
+                  : "border-transparent opacity-40",
                 today && "ring-1 ring-accent-gold",
               )}
             >
@@ -126,7 +130,7 @@ export function OutfitCalendar({
                   if (pickDate) onMarkWorn(o.id, pickDate.toISOString());
                   setPickDate(null);
                 }}
-                className="overflow-hidden rounded-lg border border-border bg-bg-secondary text-left hover:border-accent-gold/50"
+                className="overflow-hidden border border-border bg-white text-left transition-colors hover:border-accent-gold"
               >
                 <div className="relative aspect-square bg-bg-tertiary">
                   {o.exportedImageUrl ? (

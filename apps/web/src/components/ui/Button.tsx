@@ -13,20 +13,24 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
+/*
+ * Couture buttons: uppercase, letter-spaced, sharp edges.
+ * Primary is ink with an antique-gold hover; secondary is a hairline frame.
+ */
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "bg-accent-gold text-black font-semibold hover:bg-accent-gold-dim focus-visible:ring-accent-gold",
+    "bg-text-primary text-bg-primary hover:bg-accent-gold hover:text-white focus-visible:ring-accent-gold",
   secondary:
-    "border border-accent-gold text-accent-gold bg-transparent hover:bg-accent-gold/10 focus-visible:ring-accent-gold",
+    "border border-text-primary/70 text-text-primary bg-transparent hover:border-accent-gold hover:text-accent-gold focus-visible:ring-accent-gold",
   ghost:
     "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary focus-visible:ring-border",
   danger:
-    "bg-error/10 text-error border border-error/30 hover:bg-error/20 focus-visible:ring-error",
+    "border border-error/40 text-error bg-transparent hover:bg-error hover:text-white focus-visible:ring-error",
 };
 
 const SIZES: Record<Size, string> = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-5 py-2.5 text-sm",
+  sm: "px-4 py-2 text-[11px]",
+  md: "px-6 py-3 text-xs",
 };
 
 /** Themed button with variants, sizes and a loading spinner. */
@@ -36,16 +40,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg transition-all duration-150",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary",
-        "active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
+        "inline-flex items-center justify-center gap-2 rounded-none font-medium uppercase tracking-[0.18em]",
+        "transition-all duration-200 ease-out",
+        "focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary",
+        "active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none",
         VARIANTS[variant],
         SIZES[size],
         className,
       )}
       {...props}
     >
-      {loading && <Loader2 size={16} className="animate-spin" />}
+      {loading && <Loader2 size={14} className="animate-spin" />}
       {children}
     </button>
   ),
@@ -62,9 +67,9 @@ export const IconButton = forwardRef<
     aria-label={label}
     title={label}
     className={cn(
-      "w-10 h-10 rounded-full bg-bg-tertiary flex items-center justify-center",
-      "text-text-primary hover:bg-border transition-colors duration-150",
-      "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold",
+      "w-10 h-10 rounded-full border border-border bg-bg-secondary flex items-center justify-center",
+      "text-text-primary transition-colors duration-200 hover:border-accent-gold hover:text-accent-gold",
+      "focus:outline-none focus-visible:ring-1 focus-visible:ring-accent-gold",
       "disabled:opacity-40 disabled:pointer-events-none",
       className,
     )}

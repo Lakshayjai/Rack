@@ -93,7 +93,7 @@ export function CanvasStage({
           }}
         >
           <div
-            className="relative rounded-xl border border-border"
+            className="relative border border-border shadow-plume"
             style={{
               width: CANVAS_WIDTH,
               height: CANVAS_HEIGHT,

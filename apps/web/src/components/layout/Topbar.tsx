@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 
-/** Top bar: mobile logo + a decorative global search field. */
+/** Minimal top bar: mobile wordmark + a quiet underline search. */
 export function Topbar() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-bg-secondary/80 px-4 backdrop-blur md:px-6">
-      <Link href="/wardrobe" className="font-display text-xl tracking-wide md:hidden">
-        WARDROB<span className="text-accent-gold">E</span>
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-bg-primary/85 px-4 backdrop-blur-md md:px-8">
+      <Link
+        href="/wardrobe"
+        className="font-display text-lg tracking-[0.24em] text-text-primary md:hidden"
+      >
+        WARDROBE
       </Link>
-      <div className="mx-auto hidden w-full max-w-md items-center gap-2 rounded-lg border border-border bg-bg-tertiary px-3 py-2 text-text-muted sm:flex">
-        <Search size={16} />
+      <div className="mx-auto hidden w-full max-w-sm items-center gap-2 border-b border-border py-1.5 text-text-muted focus-within:border-accent-gold sm:flex">
+        <Search size={15} strokeWidth={1.5} />
         <input
           type="search"
-          placeholder="Search your wardrobe…"
-          className="w-full bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
+          placeholder="Search the atelier…"
+          className="w-full bg-transparent text-sm font-light text-text-primary placeholder:text-text-muted focus:outline-none"
         />
       </div>
     </header>

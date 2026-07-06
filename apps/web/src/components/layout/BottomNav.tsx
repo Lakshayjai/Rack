@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-bg-tertiary md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-bg-secondary/95 backdrop-blur md:hidden">
       {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
@@ -17,11 +17,11 @@ export function BottomNav() {
             key={href}
             href={href}
             className={cn(
-              "flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] transition-colors",
+              "flex flex-1 flex-col items-center gap-1 py-3 text-[10px] uppercase tracking-[0.14em] transition-colors",
               active ? "text-accent-gold" : "text-text-secondary",
             )}
           >
-            <Icon size={20} />
+            <Icon size={19} strokeWidth={1.5} />
             {label}
           </Link>
         );

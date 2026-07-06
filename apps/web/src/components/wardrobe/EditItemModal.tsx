@@ -63,7 +63,7 @@ export function EditItemModal({
     <Modal open={item !== null} onOpenChange={onOpenChange} title="Edit item">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <span className="text-sm text-text-secondary">Category</span>
+          <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Category</span>
           <div className="grid grid-cols-5 gap-2">
             {CATEGORIES.map((cat) => {
               const Icon = CATEGORY_ICONS[cat];
@@ -73,10 +73,10 @@ export function EditItemModal({
                   type="button"
                   onClick={() => setCategory(cat)}
                   className={cn(
-                    "flex flex-col items-center gap-1 rounded-lg border py-3 text-[11px] capitalize transition-colors",
+                    "flex flex-col items-center gap-1.5 border py-3 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
                     category === cat
-                      ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-                      : "border-border text-text-secondary hover:border-accent-gold/50",
+                      ? "border-text-primary bg-text-primary text-bg-primary"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
                   )}
                 >
                   <Icon size={18} />
@@ -88,7 +88,7 @@ export function EditItemModal({
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="text-sm text-text-secondary">Colors</span>
+          <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Colors</span>
           <div className="flex flex-wrap gap-2">
             {PRESET_COLORS.map(({ name, hex }) => (
               <button
@@ -139,7 +139,7 @@ function ChipField({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm text-text-secondary">{label}</span>
+      <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">{label}</span>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => (
           <button
@@ -147,10 +147,10 @@ function ChipField({
             type="button"
             onClick={() => onToggle(opt)}
             className={cn(
-              "rounded-full border px-3 py-1 text-xs capitalize transition-colors",
+              "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
               selected.includes(opt)
-                ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-                : "border-border text-text-secondary hover:border-accent-gold/50",
+                ? "border-text-primary bg-text-primary text-bg-primary"
+                : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
             )}
           >
             {opt}

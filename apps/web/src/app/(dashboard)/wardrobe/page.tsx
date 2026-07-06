@@ -57,8 +57,9 @@ export default function WardrobePage() {
   return (
     <div className="animate-fade-in-up">
       <PageHeader
-        title="Wardrobe"
-        subtitle="Your clothing, organized."
+        title="The Collection"
+        subtitle="Every piece of yours, curated and kept."
+        eyebrow="Wardrobe"
         action={
           <Button onClick={() => setUploadOpen(true)}>
             <Plus size={16} /> Add piece

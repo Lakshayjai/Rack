@@ -23,7 +23,7 @@ export function ConfirmDialog({
 }) {
   return (
     <Modal open={open} onOpenChange={onOpenChange} title={title} maxWidth="max-w-sm">
-      <p className="text-sm text-text-secondary">{message}</p>
+      <p className="font-serif text-lg italic text-text-secondary">{message}</p>
       <div className="mt-6 flex justify-end gap-3">
         <Button variant="ghost" onClick={() => onOpenChange(false)}>
           Cancel

@@ -1,40 +1,42 @@
 @import "tailwindcss";
 
 /*
- * Design tokens. Dark mode is the DEFAULT theme (applied on :root).
- * Adding the `.light` class on <html> switches to the light palette.
+ * ATELIER DESIGN SYSTEM — light luxury.
+ * Warm ivory surfaces, hairline taupe borders, ink text, antique-gold accent.
+ * LIGHT is the DEFAULT theme; adding `.dark` on <html> switches to an
+ * espresso "evening" palette.
  */
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1e1e1e;
-  --border-color: #2a2a2a;
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0a0a0;
-  --text-muted: #555555;
+  --bg-primary: #faf7f2;   /* ivory page */
+  --bg-secondary: #fffdf9; /* card white */
+  --bg-tertiary: #f3eee6;  /* warm sand panels */
+  --border-color: #e6ddcf; /* hairline taupe */
+  --text-primary: #1c1917; /* ink */
+  --text-secondary: #6b6257;
+  --text-muted: #a89f92;
+  --accent-gold: #9a7b4f;      /* antique gold — readable on ivory */
+  --accent-gold-dim: #7c6340;
+  --accent-blue: #44576e;      /* muted navy */
+  --success: #4a7c59;
+  --error: #b3423a;
+  --warning: #b07d2b;
+  --canvas-bg: #ffffff;
+}
+
+.dark {
+  --bg-primary: #16120d;
+  --bg-secondary: #1d1812;
+  --bg-tertiary: #251f17;
+  --border-color: #372f24;
+  --text-primary: #f2ece1;
+  --text-secondary: #b0a695;
+  --text-muted: #6e6455;
   --accent-gold: #c9a96e;
-  --accent-gold-dim: #8b7355;
-  --accent-blue: #4a90d9;
-  --success: #4caf50;
-  --error: #ef4444;
-  --warning: #f59e0b;
-  --canvas-bg: #1e1e1e;
+  --accent-gold-dim: #a5854e;
+  --canvas-bg: #211b14;
 }
 
-.light {
-  --bg-primary: #fafafa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f2f2f2;
-  --border-color: #e0e0e0;
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --text-muted: #999999;
-  --accent-gold: #9a7640;
-  --accent-gold-dim: #7a5d33;
-  --canvas-bg: #f9f9f9;
-}
-
-/* Map tokens + fonts into Tailwind's theme so utilities (bg-bg-secondary, text-accent-gold, font-display) generate. */
+/* Map tokens + fonts into Tailwind so utilities (bg-bg-secondary, font-display…) generate. */
 @theme inline {
   --color-bg-primary: var(--bg-primary);
   --color-bg-secondary: var(--bg-secondary);
@@ -50,43 +52,67 @@
   --color-error: var(--error);
   --color-warning: var(--warning);
 
-  --font-display: var(--font-cinzel), serif;
-  --font-accent: var(--font-surfer), cursive;
-  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-cinzel), serif;          /* wordmark, page titles */
+  --font-serif: var(--font-cormorant), Georgia, serif; /* editorial accents */
+  --font-accent: var(--font-cormorant), Georgia, serif;
+  --font-body: var(--font-jost), system-ui, sans-serif;
 }
 
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  letter-spacing: 0.01em;
 }
 
-/* Category badge palette (fixed hues regardless of theme). */
-.badge-TOP { background: #dbeafe; color: #3b82f6; }
-.badge-BOTTOM { background: #ede9fe; color: #7c3aed; }
-.badge-SHOE { background: #ffedd5; color: #ea580c; }
-.badge-ACCESSORY { background: #fce7f3; color: #db2777; }
-.badge-OUTERWEAR { background: #dcfce7; color: #16a34a; }
+/* Category badges — muted couture tones. */
+.badge-TOP { background: #e7edf4; color: #44576e; }
+.badge-BOTTOM { background: #ece7f1; color: #5f4b73; }
+.badge-SHOE { background: #f3e7db; color: #8a5a33; }
+.badge-ACCESSORY { background: #f4e6e6; color: #96524f; }
+.badge-OUTERWEAR { background: #e7ede5; color: #4a6b52; }
 
-/* Subtle scrollbars to match the dark, editorial aesthetic. */
+.dark .badge-TOP { background: #26303c; color: #a9bdd3; }
+.dark .badge-BOTTOM { background: #2e2836; color: #c3b3d6; }
+.dark .badge-SHOE { background: #38291c; color: #d9ae87; }
+.dark .badge-ACCESSORY { background: #382525; color: #d8a09d; }
+.dark .badge-OUTERWEAR { background: #25301f; color: #a9c4a4; }
+
+/* Hairline scrollbars. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
 }
 
-/* Motion — kept subtle; used by page/modal/card transitions. */
+/* Soft luxury shadows. */
+.shadow-plume { box-shadow: 0 1px 2px rgba(28, 25, 23, 0.05), 0 8px 24px -18px rgba(28, 25, 23, 0.25); }
+.shadow-plume-lg { box-shadow: 0 2px 4px rgba(28, 25, 23, 0.05), 0 24px 48px -24px rgba(28, 25, 23, 0.28); }
+
+/* Motion — quiet, unhurried. */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes modal-in {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
 }
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in-up { animation: fade-in-up 0.2s ease-out; }
-.animate-modal-in { animation: modal-in 0.2s ease-out; }
-.animate-toast-in { animation: toast-in 0.2s ease-out; }
+.animate-fade-in-up { animation: fade-in-up 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-modal-in { animation: modal-in 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+.animate-toast-in { animation: toast-in 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Editorial helpers. */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+.rule-gold {
+  height: 1px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+}

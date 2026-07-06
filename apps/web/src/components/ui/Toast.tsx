@@ -71,8 +71,8 @@ function ToastCard({ toast, onClose }: { toast: Toast; onClose: () => void }) {
     <div
       role="status"
       className={cn(
-        "animate-toast-in flex items-center gap-3 rounded-lg border border-border",
-        "bg-bg-tertiary px-4 py-3 text-sm text-text-primary shadow-lg min-w-[240px] max-w-sm",
+        "animate-toast-in flex items-center gap-3 rounded-none border border-border",
+        "bg-bg-secondary px-4 py-3 text-sm text-text-primary shadow-plume-lg min-w-[240px] max-w-sm",
       )}
     >
       {ICONS[toast.type]}

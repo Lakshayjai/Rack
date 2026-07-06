@@ -130,13 +130,17 @@ function DesignerInner() {
 
   return (
     <div className="animate-fade-in-up">
-      <h1 className="mb-4 font-display text-3xl text-text-primary">
-        {outfitId ? "Edit outfit" : "Designer"}
-      </h1>
+      <div className="mb-6">
+        <p className="eyebrow mb-2">The Atelier</p>
+        <h1 className="font-display text-3xl tracking-wide text-text-primary md:text-4xl">
+          {outfitId ? "Edit Outfit" : "Composition Room"}
+        </h1>
+        <div className="rule-gold mt-4" />
+      </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[260px_minmax(0,1fr)_220px]">
         {/* Left — wardrobe items */}
-        <aside className="order-2 h-[560px] rounded-2xl border border-border bg-bg-tertiary p-3 lg:order-1 lg:h-[calc(100vh-11rem)]">
+        <aside className="order-2 h-[560px] border border-border bg-bg-secondary p-4 shadow-plume lg:order-1 lg:h-[calc(100vh-13rem)]">
           <CanvasSidebar items={items} onAdd={addItem} />
         </aside>
 
@@ -156,7 +160,7 @@ function DesignerInner() {
             zonesVisible={zonesVisible}
           />
 
-          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-bg-secondary p-3 sm:flex-row sm:items-end">
+          <div className="flex flex-col gap-4 border border-border bg-bg-secondary p-5 shadow-plume sm:flex-row sm:items-end">
             <div className="flex-1">
               <Input
                 label="Outfit name"
@@ -180,8 +184,10 @@ function DesignerInner() {
         </section>
 
         {/* Right — properties / layer controls */}
-        <aside className="order-3 rounded-2xl border border-border bg-bg-tertiary p-4">
-          <h2 className="mb-3 font-accent text-lg text-text-secondary">Layers</h2>
+        <aside className="order-3 border border-border bg-bg-secondary p-5 shadow-plume">
+          <h2 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-text-secondary">
+            Layers
+          </h2>
           {status.hasSelection ? (
             <div className="flex flex-col gap-2">
               <LayerBtn icon={ArrowUpToLine} label="Bring to front" onClick={() => canvasRef.current?.bringToFront()} />
@@ -225,10 +231,10 @@ function LayerBtn({
     <button
       onClick={onClick}
       className={
-        "flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm transition-colors " +
+        "flex items-center gap-2 border border-border px-3 py-2.5 text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 " +
         (danger
-          ? "text-error hover:bg-error/10"
-          : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary")
+          ? "text-error hover:border-error hover:bg-error hover:text-white"
+          : "text-text-secondary hover:border-accent-gold hover:text-accent-gold")
       }
     >
       <Icon size={16} /> {label}

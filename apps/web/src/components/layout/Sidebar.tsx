@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 
-/** Desktop sidebar: logo, primary nav, and user + logout footer. Hidden on mobile. */
+/** Desktop sidebar: centered wordmark, tracked uppercase nav, user footer. */
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -25,14 +25,16 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border bg-bg-tertiary md:flex">
-      <div className="flex h-16 items-center px-6">
-        <Link href="/wardrobe" className="font-display text-2xl tracking-wide">
-          WARDROB<span className="text-accent-gold">E</span>
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-bg-secondary md:flex">
+      {/* Wordmark */}
+      <div className="flex flex-col items-center gap-1 px-6 pb-8 pt-10">
+        <Link href="/wardrobe" className="font-display text-[22px] tracking-[0.28em] text-text-primary">
+          WARDROBE
         </Link>
+        <span className="font-serif text-sm italic text-accent-gold">the private atelier</span>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 px-6">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -40,22 +42,22 @@ export function Sidebar() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-150",
+                "group flex items-center gap-3 border-b border-transparent px-1 py-3.5 text-[12px] uppercase tracking-[0.22em] transition-colors duration-200",
                 active
-                  ? "border-l-2 border-accent-gold bg-accent-gold/10 text-accent-gold"
-                  : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary",
+                  ? "border-b-accent-gold text-accent-gold"
+                  : "text-text-secondary hover:text-text-primary",
               )}
             >
-              <Icon size={20} />
+              <Icon size={17} strokeWidth={1.5} />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-border p-4">
-        <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-gold/20 font-display text-accent-gold">
+      <div className="border-t border-border px-6 py-6">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-accent-gold/50 font-display text-accent-gold">
             {user?.username?.[0]?.toUpperCase() ?? "?"}
           </div>
           <div className="min-w-0">
@@ -65,10 +67,10 @@ export function Sidebar() {
         </div>
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary"
+          className="flex w-full items-center gap-2 px-1 py-2 text-[11px] uppercase tracking-[0.22em] text-text-secondary transition-colors hover:text-error"
         >
-          <LogOut size={18} />
-          Log out
+          <LogOut size={15} strokeWidth={1.5} />
+          Sign out
         </button>
       </div>
     </aside>

@@ -111,10 +111,10 @@ export function UploadModal({
             if (f) selectFile(f);
           }}
           className={cn(
-            "relative flex h-52 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed transition-all",
+            "relative flex h-52 w-full flex-col items-center justify-center gap-2 border border-dashed bg-white transition-all duration-200",
             dragOver
-              ? "scale-[1.02] border-accent-gold bg-accent-gold/5"
-              : "border-border hover:border-accent-gold/60",
+              ? "scale-[1.01] border-accent-gold bg-accent-gold/5"
+              : "border-border hover:border-accent-gold/70",
           )}
         >
           {previewUrl ? (
@@ -127,11 +127,13 @@ export function UploadModal({
             />
           ) : (
             <>
-              <UploadCloud size={28} className="text-text-muted" />
-              <span className="text-sm text-text-secondary">
-                Drop your clothing photo here or click to browse
+              <UploadCloud size={26} strokeWidth={1.25} className="text-accent-gold" />
+              <span className="font-serif text-lg italic text-text-secondary">
+                Drop your clothing photo here, or click to browse
               </span>
-              <span className="text-xs text-text-muted">JPG, PNG, WebP · max 5MB</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-text-muted">
+                JPG · PNG · WebP — max 5MB
+              </span>
             </>
           )}
           <input
@@ -158,10 +160,10 @@ export function UploadModal({
                   type="button"
                   onClick={() => setCategory(cat)}
                   className={cn(
-                    "flex flex-col items-center gap-1 rounded-lg border py-3 text-[11px] capitalize transition-colors",
+                    "flex flex-col items-center gap-1.5 border py-3 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
                     active
-                      ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-                      : "border-border text-text-secondary hover:border-accent-gold/50",
+                      ? "border-text-primary bg-text-primary text-bg-primary"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
                   )}
                 >
                   <Icon size={18} />
@@ -248,8 +250,8 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="text-sm text-text-secondary">
+    <div className="flex flex-col gap-2.5">
+      <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">
         {label} {required && <span className="text-accent-gold">*</span>}
       </span>
       {children}
@@ -274,10 +276,10 @@ function ChipRow({
           type="button"
           onClick={() => onToggle(opt)}
           className={cn(
-            "rounded-full border px-3 py-1 text-xs capitalize transition-colors",
+            "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
             selected.includes(opt)
-              ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-              : "border-border text-text-secondary hover:border-accent-gold/50",
+              ? "border-text-primary bg-text-primary text-bg-primary"
+              : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
           )}
         >
           {opt}

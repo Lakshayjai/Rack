@@ -1,7 +1,7 @@
 import type { Category } from "shared-types";
 import { cn } from "@/lib/utils";
 
-/** Color-coded category pill. Colors are defined as .badge-<CATEGORY> in globals.css. */
+/** Couture category tag. Colors are defined as .badge-<CATEGORY> in globals.css. */
 export function CategoryBadge({
   category,
   className,
@@ -12,7 +12,7 @@ export function CategoryBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize",
+        "inline-flex items-center rounded-none px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em]",
         `badge-${category}`,
         className,
       )}

@@ -211,5 +211,5 @@ export const OutfitCanvas = forwardRef<
     [],
   );
 
-  return <canvas ref={elRef} className="rounded-xl" />;
+  return <canvas ref={elRef} />;
 });

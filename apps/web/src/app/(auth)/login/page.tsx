@@ -49,7 +49,7 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 rounded-2xl border border-border bg-bg-secondary p-6"
+      className="flex flex-col gap-6 border border-border bg-bg-secondary p-8 shadow-plume"
     >
       <Input
         id="email"
@@ -70,12 +70,12 @@ export default function LoginPage() {
         {...register("password")}
       />
       <Button type="submit" loading={isSubmitting} className="mt-2 w-full">
-        Log in
+        Enter
       </Button>
-      <p className="text-center text-sm text-text-secondary">
-        No account?{" "}
-        <Link href="/register" className="text-accent-gold hover:underline">
-          Create one
+      <p className="text-center font-serif text-base italic text-text-secondary">
+        New here?{" "}
+        <Link href="/register" className="text-accent-gold underline-offset-4 hover:underline">
+          Create your atelier
         </Link>
       </p>
     </form>

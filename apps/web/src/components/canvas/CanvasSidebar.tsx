@@ -42,7 +42,7 @@ export function CanvasSidebar({
 
   return (
     <div className="flex h-full flex-col gap-3">
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-bg-secondary px-2.5 py-2">
+      <div className="flex items-center gap-2 border-b border-border py-2 focus-within:border-accent-gold">
         <Search size={14} className="text-text-muted" />
         <input
           value={search}
@@ -58,10 +58,10 @@ export function CanvasSidebar({
             key={c}
             onClick={() => setCategory(c)}
             className={cn(
-              "rounded-full border px-2 py-0.5 text-[11px] capitalize transition-colors",
+              "border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
               category === c
-                ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-                : "border-border text-text-secondary hover:border-accent-gold/50",
+                ? "border-text-primary bg-text-primary text-bg-primary"
+                : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
             )}
           >
             {c === "ALL" ? "all" : c.toLowerCase()}
@@ -89,7 +89,7 @@ export function CanvasSidebar({
               }}
               onClick={() => onAdd(item)}
               title="Tap to add, or drag onto the canvas"
-              className="relative aspect-square cursor-grab overflow-hidden rounded-lg border border-border bg-bg-secondary active:cursor-grabbing"
+              className="relative aspect-square cursor-grab overflow-hidden border border-border bg-white transition-colors hover:border-accent-gold active:cursor-grabbing"
             >
               <Image
                 src={thumb(item.imageUrl)}

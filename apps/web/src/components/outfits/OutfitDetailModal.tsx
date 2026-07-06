@@ -73,7 +73,7 @@ export function OutfitDetailModal({
       <Modal open={outfit !== null} onOpenChange={onOpenChange} title={outfit.name} maxWidth="max-w-2xl">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-[1fr_1fr]">
           {/* Preview */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-border bg-bg-secondary">
+          <div className="relative aspect-[4/5] overflow-hidden border border-border bg-white">
             {outfit.exportedImageUrl ? (
               <Image src={outfit.exportedImageUrl} alt={outfit.name} fill sizes="320px" className="object-contain" />
             ) : (
@@ -86,11 +86,11 @@ export function OutfitDetailModal({
 
           <div className="flex flex-col gap-4">
             {outfit.description && (
-              <p className="text-sm text-text-secondary">{outfit.description}</p>
+              <p className="font-serif text-lg italic text-text-secondary">{outfit.description}</p>
             )}
 
             <div>
-              <p className="mb-2 text-sm text-text-secondary">
+              <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-text-secondary">
                 Pieces ({usedItems.length})
               </p>
               {usedItems.length === 0 ? (
@@ -99,7 +99,7 @@ export function OutfitDetailModal({
                 <div className="flex flex-wrap gap-2">
                   {usedItems.map((item) => (
                     <div key={item.id} className="relative">
-                      <div className="relative h-14 w-14 overflow-hidden rounded-lg border border-border bg-bg-secondary">
+                      <div className="relative h-14 w-14 overflow-hidden border border-border bg-white">
                         <Image src={thumb(item.imageUrl)} alt={item.category} fill sizes="56px" className="object-contain p-1" />
                       </div>
                       <CategoryBadge category={item.category} className="absolute -bottom-1 -right-1 scale-75" />
@@ -110,7 +110,7 @@ export function OutfitDetailModal({
             </div>
 
             <div>
-              <p className="mb-2 text-sm text-text-secondary">
+              <p className="mb-2 text-[11px] uppercase tracking-[0.2em] text-text-secondary">
                 Worn {outfit.wornDates.length}×
               </p>
               {outfit.wornDates.length > 0 && (
@@ -120,7 +120,7 @@ export function OutfitDetailModal({
                     .sort((a, b) => b.localeCompare(a))
                     .slice(0, 8)
                     .map((d) => (
-                      <span key={d} className="rounded-full bg-bg-tertiary px-2 py-0.5 text-xs text-text-secondary">
+                      <span key={d} className="bg-bg-tertiary px-2.5 py-0.5 font-serif text-sm italic text-text-secondary">
                         {format(new Date(d), "MMM d, yyyy")}
                       </span>
                     ))}

@@ -6,6 +6,10 @@ import { PRESET_COLORS } from "@/lib/wardrobe-constants";
 import type { WardrobeFilters } from "@/hooks/useWardrobe";
 import { cn } from "@/lib/utils";
 
+const SELECT =
+  "border border-border bg-bg-secondary px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] " +
+  "text-text-secondary focus:border-accent-gold focus:outline-none";
+
 /** Category / style / color / search filters for the wardrobe grid. */
 export function FilterBar({
   filters,
@@ -19,14 +23,14 @@ export function FilterBar({
     filters.category || filters.style || filters.color || filters.search;
 
   return (
-    <div className="mb-6 flex flex-col gap-3">
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-bg-secondary px-3 py-2">
-        <Search size={16} className="text-text-muted" />
+    <div className="mb-8 flex flex-col gap-4">
+      <div className="flex max-w-md items-center gap-2 border-b border-border py-2 focus-within:border-accent-gold">
+        <Search size={15} strokeWidth={1.5} className="text-text-muted" />
         <input
           value={filters.search ?? ""}
           onChange={(e) => set({ search: e.target.value || undefined })}
           placeholder="Search by brand, note or color…"
-          className="w-full bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
+          className="w-full bg-transparent text-sm font-light text-text-primary placeholder:text-text-muted focus:outline-none"
         />
       </div>
 
@@ -44,12 +48,12 @@ export function FilterBar({
           </Pill>
         ))}
 
-        <span className="mx-1 h-5 w-px bg-border" />
+        <span className="mx-2 h-4 w-px bg-border" />
 
         <select
           value={filters.style ?? ""}
           onChange={(e) => set({ style: e.target.value || undefined })}
-          className="rounded-full border border-border bg-bg-secondary px-3 py-1 text-xs capitalize text-text-secondary focus:border-accent-gold focus:outline-none"
+          className={SELECT}
         >
           <option value="">any style</option>
           {STYLES.map((s) => (
@@ -62,7 +66,7 @@ export function FilterBar({
         <select
           value={filters.color ?? ""}
           onChange={(e) => set({ color: e.target.value || undefined })}
-          className="rounded-full border border-border bg-bg-secondary px-3 py-1 text-xs capitalize text-text-secondary focus:border-accent-gold focus:outline-none"
+          className={SELECT}
         >
           <option value="">any color</option>
           {PRESET_COLORS.map((c) => (
@@ -75,9 +79,9 @@ export function FilterBar({
         {hasFilters && (
           <button
             onClick={() => onChange({})}
-            className="ml-auto flex items-center gap-1 text-xs text-text-muted hover:text-text-primary"
+            className="ml-auto flex items-center gap-1 text-[11px] uppercase tracking-[0.18em] text-text-muted transition-colors hover:text-text-primary"
           >
-            <X size={14} /> Clear
+            <X size={13} /> Clear
           </button>
         )}
       </div>
@@ -98,10 +102,10 @@ function Pill({
     <button
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3 py-1 text-xs capitalize transition-colors",
+        "border px-4 py-1.5 text-[11px] uppercase tracking-[0.16em] transition-all duration-200",
         active
-          ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
-          : "border-border text-text-secondary hover:border-accent-gold/50",
+          ? "border-text-primary bg-text-primary text-bg-primary"
+          : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
       )}
     >
       {children}

@@ -67,15 +67,16 @@ export default function OutfitsPage() {
   return (
     <div className="animate-fade-in-up">
       <PageHeader
-        title="Outfits"
-        subtitle="Your saved looks."
+        title="The Lookbook"
+        subtitle="Your composed looks, kept and worn."
+        eyebrow="Outfits"
         action={
           <div className="flex items-center gap-2">
             {view === "grid" && (
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as OutfitSort)}
-                className="rounded-lg border border-border bg-bg-secondary px-3 py-2 text-sm text-text-secondary focus:border-accent-gold focus:outline-none"
+                className="border border-border bg-bg-secondary px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-text-secondary focus:border-accent-gold focus:outline-none"
               >
                 {OUTFIT_SORTS.map((s) => (
                   <option key={s} value={s}>
@@ -84,7 +85,7 @@ export default function OutfitsPage() {
                 ))}
               </select>
             )}
-            <div className="flex overflow-hidden rounded-lg border border-border">
+            <div className="flex overflow-hidden border border-border">
               <ViewBtn active={view === "grid"} onClick={() => setView("grid")} label="Grid">
                 <Grid2x2 size={18} />
               </ViewBtn>
@@ -147,7 +148,7 @@ function ViewBtn({
       title={label}
       className={cn(
         "flex h-10 w-10 items-center justify-center transition-colors",
-        active ? "bg-accent-gold/10 text-accent-gold" : "text-text-secondary hover:bg-bg-tertiary",
+        active ? "bg-text-primary text-bg-primary" : "text-text-secondary hover:bg-bg-tertiary",
       )}
     >
       {children}

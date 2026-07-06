@@ -29,7 +29,7 @@ export function CanvasToolbar({
   onExport: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border bg-bg-secondary p-1.5">
+    <div className="flex flex-wrap items-center gap-1 border border-border bg-bg-secondary p-1.5 shadow-plume">
       <ToolBtn label="Undo" onClick={() => controller?.undo()} disabled={!status.canUndo}>
         <Undo2 size={18} />
       </ToolBtn>
@@ -97,9 +97,9 @@ function ToolBtn({
       title={label}
       aria-label={label}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-lg text-text-secondary transition-colors",
-        "hover:bg-bg-tertiary hover:text-text-primary",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-gold",
+        "flex h-9 w-9 items-center justify-center text-text-secondary transition-colors duration-200",
+        "hover:bg-bg-tertiary hover:text-accent-gold",
+        "focus:outline-none focus-visible:ring-1 focus-visible:ring-accent-gold",
         "disabled:opacity-30 disabled:pointer-events-none",
       )}
     >

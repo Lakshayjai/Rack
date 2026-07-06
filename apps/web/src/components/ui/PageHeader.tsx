@@ -1,22 +1,32 @@
 import type { ReactNode } from "react";
 
-/** Consistent page title block with an optional action slot on the right. */
+/** Editorial masthead: gold eyebrow, Cinzel title, serif subtitle, hairline rule. */
 export function PageHeader({
   title,
   subtitle,
+  eyebrow = "The Atelier",
   action,
 }: {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex items-end justify-between gap-4">
-      <div>
-        <h1 className="font-display text-3xl text-text-primary">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-text-secondary">{subtitle}</p>}
+    <div className="mb-8">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow mb-2">{eyebrow}</p>
+          <h1 className="font-display text-3xl tracking-wide text-text-primary md:text-4xl">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-2 font-serif text-lg italic text-text-secondary">{subtitle}</p>
+          )}
+        </div>
+        {action && <div className="shrink-0 pb-1">{action}</div>}
       </div>
-      {action}
+      <div className="rule-gold mt-5" />
     </div>
   );
 }

@@ -15,7 +15,7 @@ interface ModalProps {
   maxWidth?: string;
 }
 
-/** Accessible modal built on Radix Dialog, styled to the design system. */
+/** Gallery-plaque modal: sharp ivory panel, hairline frame, serif title. */
 export function Modal({
   open,
   onOpenChange,
@@ -27,33 +27,36 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-fade-in-up" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-[#1c1917]/30 backdrop-blur-[2px] data-[state=open]:animate-fade-in-up" />
         <Dialog.Content
           className={cn(
             "fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2",
-            "rounded-2xl border border-border bg-bg-tertiary p-6 shadow-2xl",
+            "rounded-none border border-border bg-bg-secondary p-8 shadow-plume-lg",
             "animate-modal-in max-h-[90vh] overflow-y-auto",
             maxWidth,
           )}
         >
-          <div className="mb-4 flex items-start justify-between gap-4">
+          <div className="mb-6 flex items-start justify-between gap-4">
             <div>
               {title && (
-                <Dialog.Title className="font-display text-2xl text-text-primary">
-                  {title}
-                </Dialog.Title>
+                <>
+                  <Dialog.Title className="font-display text-2xl tracking-wide text-text-primary">
+                    {title}
+                  </Dialog.Title>
+                  <div className="rule-gold mt-2 w-12" />
+                </>
               )}
               {description && (
-                <Dialog.Description className="mt-1 text-sm text-text-secondary">
+                <Dialog.Description className="mt-3 font-serif text-base italic text-text-secondary">
                   {description}
                 </Dialog.Description>
               )}
             </div>
             <Dialog.Close
-              className="rounded-lg p-1 text-text-muted hover:text-text-primary hover:bg-bg-secondary transition-colors"
+              className="p-1 text-text-muted transition-colors hover:text-text-primary"
               aria-label="Close"
             >
-              <X size={20} />
+              <X size={20} strokeWidth={1.5} />
             </Dialog.Close>
           </div>
           {children}

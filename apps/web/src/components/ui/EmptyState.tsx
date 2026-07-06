@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-/** Centered empty-state block: icon + title + copy + optional CTA. */
+/** Centered empty-state vignette: fine-line icon, serif copy, one clear CTA. */
 export function EmptyState({
   icon: Icon,
   title,
@@ -14,13 +14,17 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-20 text-center">
-      <Icon size={48} className="text-text-muted" strokeWidth={1.25} />
-      <h3 className="mt-4 font-display text-xl text-text-primary">{title}</h3>
+    <div className="flex flex-col items-center justify-center border border-border bg-bg-secondary py-24 text-center shadow-plume">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-border">
+        <Icon size={30} className="text-accent-gold" strokeWidth={1} />
+      </div>
+      <h3 className="mt-6 font-display text-2xl tracking-wide text-text-primary">{title}</h3>
       {description && (
-        <p className="mt-1 max-w-xs text-sm text-text-secondary">{description}</p>
+        <p className="mt-3 max-w-sm font-serif text-lg italic text-text-secondary">
+          {description}
+        </p>
       )}
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-8">{action}</div>}
     </div>
   );
 }
