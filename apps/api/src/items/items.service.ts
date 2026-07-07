@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ClothingItem as PrismaItem, Prisma } from '@prisma/client';
-import type { ClothingItem, Category } from 'shared-types';
+import { ETHNIC_SUBTYPE_NAMES, type ClothingItem, type Category } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadService } from '../upload/upload.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -35,6 +35,7 @@ export class ItemsService {
       occasions: item.occasions,
       brand: item.brand,
       notes: item.notes,
+      pairedItemIds: item.pairedItemIds,
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
     };
@@ -58,6 +59,7 @@ export class ItemsService {
         occasions: dto.occasions,
         brand: dto.brand ?? null,
         notes: dto.notes ?? null,
+        pairedItemIds: dto.pairedItemIds ?? [],
       },
     });
     return this.toDto(item);
@@ -68,15 +70,25 @@ export class ItemsService {
     if (query.category) where.category = query.category;
     if (query.style) where.styles = { has: query.style };
     if (query.color) where.colors = { has: query.color };
+    // AND-composed OR groups so ethnic + search can combine without clobbering.
+    const and: Prisma.ClothingItemWhereInput[] = [];
+    if (query.ethnic) {
+      and.push({
+        OR: [{ subtype: { in: ETHNIC_SUBTYPE_NAMES } }, { styles: { has: 'ethnic' } }],
+      });
+    }
     if (query.search) {
       const term = query.search;
-      where.OR = [
-        { brand: { contains: term, mode: 'insensitive' } },
-        { subtype: { contains: term, mode: 'insensitive' } },
-        { notes: { contains: term, mode: 'insensitive' } },
-        { colors: { has: term.toLowerCase() } },
-      ];
+      and.push({
+        OR: [
+          { brand: { contains: term, mode: 'insensitive' } },
+          { subtype: { contains: term, mode: 'insensitive' } },
+          { notes: { contains: term, mode: 'insensitive' } },
+          { colors: { has: term.toLowerCase() } },
+        ],
+      });
     }
+    if (and.length > 0) where.AND = and;
 
     const [rows, total] = await Promise.all([
       this.prisma.clothingItem.findMany({
@@ -110,6 +122,7 @@ export class ItemsService {
         ...(dto.occasions !== undefined && { occasions: dto.occasions }),
         ...(dto.brand !== undefined && { brand: dto.brand }),
         ...(dto.notes !== undefined && { notes: dto.notes }),
+        ...(dto.pairedItemIds !== undefined && { pairedItemIds: dto.pairedItemIds }),
       },
     });
     return this.toDto(item);

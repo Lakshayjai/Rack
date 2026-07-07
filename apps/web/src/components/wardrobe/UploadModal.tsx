@@ -13,7 +13,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { MaskEditor } from "@/components/wardrobe/MaskEditor";
 import {
   CATEGORY_LABELS,
+  ETHNIC_GROUP_LABEL,
   PRESET_COLORS,
+  ethnicWearFor,
   subtypesFor,
 } from "@/lib/wardrobe-constants";
 import { ApiError } from "@/lib/api";
@@ -125,6 +127,8 @@ export function UploadModal({
 
   const [category, setCategory] = useState<Category | null>(null);
   const [subtype, setSubtype] = useState<string | null>(null);
+  /** Ethnic / Indian Wear picker mode: choose a garment first, category follows. */
+  const [ethnicMode, setEthnicMode] = useState(false);
   const [colors, setColors] = useState<string[]>([]);
   const [styles, setStyles] = useState<string[]>([]);
   const [occasions, setOccasions] = useState<string[]>([]);
@@ -144,6 +148,7 @@ export function UploadModal({
     setRefineKey(null);
     setCategory(null);
     setSubtype(null);
+    setEthnicMode(false);
     setColors([]);
     setStyles([]);
     setOccasions([]);
@@ -202,6 +207,7 @@ export function UploadModal({
     if (step === "details" && !legacyMode && single) {
       setCategory(single.category);
       setSubtype(null);
+      setEthnicMode(false);
     }
   }, [step, legacyMode, single?.category]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -441,14 +447,15 @@ export function UploadModal({
           {/* Category is chosen per-cutout in review; ask here only for single/legacy. */}
           {(legacyMode || single) && (
             <Field label="Category" required>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {CATEGORIES.map((cat) => {
-                  const active = category === cat;
+                  const active = !ethnicMode && category === cat;
                   return (
                     <button
                       key={cat}
                       type="button"
                       onClick={() => {
+                        setEthnicMode(false);
                         setCategory(cat);
                         setSubtype(null);
                       }}
@@ -463,19 +470,66 @@ export function UploadModal({
                     </button>
                   );
                 })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEthnicMode(true);
+                    setCategory(null);
+                    setSubtype(null);
+                  }}
+                  className={cn(
+                    "border px-1 py-2 text-[10px] uppercase tracking-[0.1em] transition-all duration-200",
+                    ethnicMode
+                      ? "border-accent-gold bg-accent-gold text-white"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
+                  )}
+                >
+                  {ETHNIC_GROUP_LABEL}
+                </button>
               </div>
             </Field>
           )}
 
-          {(legacyMode || single) && category && subtypesFor(user?.gender, category).length > 0 && (
-            <Field label="Type">
+          {/* Ethnic garments carry their structural slot; picking one sets both. */}
+          {(legacyMode || single) && ethnicMode && (
+            <Field label="Garment" required>
               <ChipRow
-                options={subtypesFor(user?.gender, category)}
+                options={ethnicWearFor(user?.gender).map((e) => e.name)}
                 selected={subtype ? [subtype] : []}
-                onToggle={(t) => setSubtype((cur) => (cur === t ? null : t))}
+                onToggle={(name) => {
+                  const entry = ethnicWearFor(user?.gender).find((e) => e.name === name);
+                  if (!entry) return;
+                  if (subtype === name) {
+                    setSubtype(null);
+                    setCategory(null);
+                    return;
+                  }
+                  setSubtype(name);
+                  setCategory(entry.category);
+                  // Ethnic pieces are tagged with the "ethnic" style automatically.
+                  setStyles((cur) => (cur.includes("ethnic") ? cur : [...cur, "ethnic"]));
+                }}
               />
+              {subtype && category && (
+                <p className="font-serif text-sm italic text-text-muted">
+                  {subtype} → worn as {CATEGORY_LABELS[category]}
+                </p>
+              )}
             </Field>
           )}
+
+          {(legacyMode || single) &&
+            !ethnicMode &&
+            category &&
+            subtypesFor(user?.gender, category).length > 0 && (
+              <Field label="Type">
+                <ChipRow
+                  options={subtypesFor(user?.gender, category)}
+                  selected={subtype ? [subtype] : []}
+                  onToggle={(t) => setSubtype((cur) => (cur === t ? null : t))}
+                />
+              </Field>
+            )}
 
           <Field label="Colors">
             <div className="flex flex-wrap gap-2">

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Check, ChevronDown, RotateCcw, Sparkles } from "lucide-react";
 import type { Category, ClothingItem } from "shared-types";
-import { OUTFIT_TAG_PRESETS } from "shared-types";
+import { OUTFIT_TAG_PRESETS, arePaired } from "shared-types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -100,7 +100,7 @@ export default function NewOutfitPage() {
     const pieces: LayoutPiece[] = selectedItems.map((item) => ({
       id: item.id,
       url: item.imageUrl,
-      role: roleFor(item.category),
+      role: roleFor(item.category, item.subtype),
       subtype: item.subtype,
       aspect: aspects[item.id],
     }));
@@ -137,7 +137,12 @@ export default function NewOutfitPage() {
           {/* Left — slot pickers */}
           <div className="flex flex-col gap-3">
             {SLOTS.map((slot) => {
-              const slotItems = items.filter((i) => i.category === slot.category);
+              // Pieces that pair with something already picked float to the front.
+              const pairsWithSelection = (i: ClothingItem) =>
+                selectedItems.some((sel) => sel.id !== i.id && arePaired(sel, i));
+              const slotItems = items
+                .filter((i) => i.category === slot.category)
+                .sort((a, b) => Number(pairsWithSelection(b)) - Number(pairsWithSelection(a)));
               const chosen = picks[slot.key] ?? [];
               const isOpen = activeSlot === slot.key;
               const Icon = CATEGORY_ICONS[slot.category];
@@ -202,6 +207,7 @@ export default function NewOutfitPage() {
                         <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-6">
                           {slotItems.map((item) => {
                             const active = chosen.includes(item.id);
+                            const suggested = !active && pairsWithSelection(item);
                             return (
                               <button
                                 key={item.id}
@@ -212,7 +218,9 @@ export default function NewOutfitPage() {
                                   "relative aspect-square overflow-hidden border bg-white transition-all duration-200",
                                   active
                                     ? "border-accent-gold shadow-plume"
-                                    : "border-border hover:border-accent-gold/60",
+                                    : suggested
+                                      ? "border-accent-gold/70"
+                                      : "border-border hover:border-accent-gold/60",
                                 )}
                               >
                                 <Image
@@ -225,6 +233,11 @@ export default function NewOutfitPage() {
                                 {active && (
                                   <span className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center bg-accent-gold text-white">
                                     <Check size={11} strokeWidth={3} />
+                                  </span>
+                                )}
+                                {suggested && (
+                                  <span className="absolute bottom-0 left-0 bg-accent-gold px-1 py-0.5 text-[8px] uppercase tracking-[0.12em] text-white">
+                                    pairs
                                   </span>
                                 )}
                               </button>

@@ -7,6 +7,8 @@ import { useWardrobeStore } from "@/stores/wardrobeStore";
 
 export interface WardrobeFilters {
   category?: Category;
+  /** Restrict to the Ethnic / Indian Wear group. Combines with the other filters. */
+  ethnic?: boolean;
   style?: string;
   color?: string;
   search?: string;
@@ -27,6 +29,8 @@ export interface UploadMetadata {
   occasions: string[];
   brand?: string;
   notes?: string;
+  /** Items this piece pairs with as a set (lehenga + choli + dupatta). */
+  pairedItemIds?: string[];
 }
 
 /** Wardrobe data actions backed by the Zustand cache. */

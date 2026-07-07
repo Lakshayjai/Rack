@@ -140,7 +140,7 @@ export const OutfitCanvas = forwardRef<
               piece: {
                 id: String(index), // index key: the same item may appear twice
                 url: item.url,
-                role: roleFor(item.category),
+                role: roleFor(item.category, item.subtype),
                 subtype: item.subtype,
                 aspect: img.height / img.width,
               },

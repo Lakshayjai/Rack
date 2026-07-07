@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Check, Link2 } from "lucide-react";
 import { STYLES, OCCASIONS, type Category, type ClothingItem } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -10,7 +12,7 @@ import { useWardrobe } from "@/hooks/useWardrobe";
 import { useAuth } from "@/hooks/useAuth";
 import { CATEGORY_ICONS, CATEGORY_LABELS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
 import { ApiError } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { thumb, cn } from "@/lib/utils";
 
 function toggle(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -25,7 +27,7 @@ export function EditItemModal({
   onOpenChange: (open: boolean) => void;
 }) {
   const toast = useToast();
-  const { editItem } = useWardrobe();
+  const { items, editItem } = useWardrobe();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
 
@@ -38,6 +40,7 @@ export function EditItemModal({
   const [occasions, setOccasions] = useState<string[]>([]);
   const [brand, setBrand] = useState("");
   const [notes, setNotes] = useState("");
+  const [pairedIds, setPairedIds] = useState<string[]>([]);
 
   // Hydrate the form whenever a new item is opened.
   useEffect(() => {
@@ -49,7 +52,10 @@ export function EditItemModal({
     setOccasions(item.occasions);
     setBrand(item.brand ?? "");
     setNotes(item.notes ?? "");
+    setPairedIds(item.pairedItemIds ?? []);
   }, [item]);
+
+  const pairCandidates = items.filter((i) => i.id !== item?.id);
 
   const save = async () => {
     if (!item) return;
@@ -63,6 +69,7 @@ export function EditItemModal({
         occasions,
         brand,
         notes,
+        pairedItemIds: pairedIds,
       });
       toast.success("Item updated");
       onOpenChange(false);
@@ -149,6 +156,41 @@ export function EditItemModal({
 
         <ChipField label="Style" options={[...STYLES]} selected={styles} onToggle={(v) => setStyles((s) => toggle(s, v))} />
         <ChipField label="Occasion" options={[...OCCASIONS]} selected={occasions} onToggle={(v) => setOccasions((o) => toggle(o, v))} />
+
+        {pairCandidates.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-text-secondary">
+              <Link2 size={13} /> Pairs with
+              <span className="normal-case tracking-normal font-serif italic text-text-muted">
+                — link set pieces (lehenga + choli + dupatta)
+              </span>
+            </span>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {pairCandidates.map((i) => {
+                const active = pairedIds.includes(i.id);
+                return (
+                  <button
+                    key={i.id}
+                    type="button"
+                    title={i.subtype ?? i.category}
+                    onClick={() => setPairedIds((cur) => toggle(cur, i.id))}
+                    className={cn(
+                      "relative h-16 w-16 shrink-0 border bg-white transition-all duration-200",
+                      active ? "border-accent-gold shadow-plume" : "border-border opacity-80 hover:opacity-100",
+                    )}
+                  >
+                    <Image src={thumb(i.imageUrl)} alt={i.subtype ?? i.category} fill sizes="64px" className="object-contain p-1" />
+                    {active && (
+                      <span className="absolute left-0.5 top-0.5 flex h-4 w-4 items-center justify-center bg-accent-gold text-white">
+                        <Check size={11} strokeWidth={3} />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <Input label="Brand (optional)" value={brand} onChange={(e) => setBrand(e.target.value)} />
         <Textarea label="Notes (optional)" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />

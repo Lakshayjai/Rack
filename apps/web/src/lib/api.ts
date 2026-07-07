@@ -17,7 +17,7 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   /** Raw FormData body for file uploads (sets no Content-Type so the browser adds the boundary). */
   formData?: FormData;
   /** Query params appended to the URL. */
-  query?: Record<string, string | number | undefined | null>;
+  query?: Record<string, string | number | boolean | undefined | null>;
 }
 
 /**

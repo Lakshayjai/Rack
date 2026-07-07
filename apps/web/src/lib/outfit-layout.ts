@@ -12,10 +12,22 @@ import type { Category } from "shared-types";
  * (absolute-positioned <img>s) and the Fabric designer canvas.
  */
 
-export type SlotRole = "top" | "bottom" | "full" | "outerwear" | "shoes" | "accessory";
+export type SlotRole =
+  | "top"
+  | "bottom"
+  | "full"
+  | "outerwear"
+  | "drape"
+  | "shoes"
+  | "accessory";
 
-/** Which layout slot a wardrobe category occupies. */
-export function roleFor(category: Category): SlotRole {
+/**
+ * Which layout slot a wardrobe category occupies. The subtype refines it:
+ * a dupatta/stole is an ACCESSORY by category but drapes as its own tall layer
+ * beside the main column, between the garments and the accessory rail.
+ */
+export function roleFor(category: Category, subtype?: string | null): SlotRole {
+  if (/dupatta|stole/.test((subtype ?? "").toLowerCase())) return "drape";
   switch (category) {
     case "TOP":
       return "top";
@@ -62,6 +74,7 @@ const BASE_W: Record<SlotRole, number> = {
   bottom: 0.46,
   full: 0.48,
   outerwear: 0.46,
+  drape: 0.22,
   shoes: 0.32,
   accessory: 0.18,
 };
@@ -72,6 +85,7 @@ const MAX_H: Record<SlotRole, number> = {
   bottom: 0.54,
   full: 0.66,
   outerwear: 0.38,
+  drape: 0.52,
   shoes: 0.21,
   accessory: 0.15,
 };
@@ -81,15 +95,16 @@ const DEFAULT_ASPECT = 1.15;
 /** Vertical rail slots for accessories, ordered by where each kind naturally sits. */
 function accessoryRailY(subtype: string | null | undefined): number {
   const t = (subtype ?? "").toLowerCase();
-  if (/cap|hat|beanie/.test(t)) return 0.1;
-  if (/sunglass|glass|headphone/.test(t)) return 0.28;
-  if (/watch|chain|necklace|earring|bracelet|jewel|tie|hair/.test(t)) return 0.44;
+  if (/cap|hat|beanie|turban|safa|pagdi/.test(t)) return 0.1;
+  if (/sunglass|glass|headphone|tikka/.test(t)) return 0.28;
+  if (/watch|chain|necklace|earring|jhumka|bracelet|bangle|jewel|brooch|tie|hair/.test(t))
+    return 0.44;
   if (/belt|scarf/.test(t)) return 0.62;
   return 0.44;
 }
 
 function isBag(subtype: string | null | undefined): boolean {
-  return /bag|tote|backpack|purse|clutch/.test((subtype ?? "").toLowerCase());
+  return /bag|tote|backpack|purse|clutch|potli/.test((subtype ?? "").toLowerCase());
 }
 
 /** Width + clamped height (both fractional) for a piece at a given base width. */
@@ -113,6 +128,7 @@ export function layoutOutfit(pieces: LayoutPiece[]): Placement[] {
   const tops = byRole("top");
   const bottoms = byRole("bottom");
   const outers = byRole("outerwear");
+  const drapes = byRole("drape");
   const shoes = byRole("shoes");
   const accessories = byRole("accessory");
 
@@ -187,6 +203,14 @@ export function layoutOutfit(pieces: LayoutPiece[]): Placement[] {
   }
 
   const hasMains = fulls.length + tops.length + bottoms.length + outers.length > 0;
+
+  // Dupatta / stole: a tall drape hanging beside the main column, layered above
+  // the garments and below the accessory rail (like a flat-lay's trailing fabric).
+  drapes.forEach((p, i) =>
+    hasMains
+      ? place(p, "drape", mainX - 0.21, Math.min(boundaryY + 0.06, 0.6), 4, undefined, i)
+      : place(p, "drape", 0.34, 0.42, 2, BASE_W.drape * 1.5, i),
+  );
 
   shoes.forEach((p, i) => {
     // Shoes sit bottom-right, slightly overlapping the bottoms' leg.

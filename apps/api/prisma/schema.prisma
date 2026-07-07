@@ -26,12 +26,14 @@ model ClothingItem {
   imageUrl  String
   thumbUrl  String?
   category  String // TOP | BOTTOM | DRESS | SHOE | ACCESSORY | OUTERWEAR
-  subtype   String? // e.g. t-shirt | shirt | jeans | heels — gender-aware garment type
+  subtype   String? // e.g. t-shirt | jeans | saree | kurta — gender-aware garment type (ethnic wear included)
   colors    String[]
-  styles    String[] // casual | formal | streetwear | smart-casual | sport
-  occasions String[] // daily | work | party | gym | date
+  styles    String[] // casual | formal | streetwear | smart-casual | sport | ethnic
+  occasions String[] // daily | work | party | gym | date | wedding | festival | puja
   brand     String?
   notes     String?
+  // Items linked as a set (lehenga + choli + dupatta, kurta + pajama); read as symmetric.
+  pairedItemIds String[] @default([])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

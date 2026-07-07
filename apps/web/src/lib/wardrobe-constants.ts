@@ -5,9 +5,10 @@ import {
   Watch,
   Layers,
   Ribbon,
+  Flower2,
   type LucideIcon,
 } from "lucide-react";
-import type { Category, Gender } from "shared-types";
+import { ETHNIC_WEAR, type Category, type EthnicSubcategory, type Gender } from "shared-types";
 
 /** Icon shown for each category in selectors and badges. */
 export const CATEGORY_ICONS: Record<Category, LucideIcon> = {
@@ -45,14 +46,14 @@ const SUBTYPES: Record<Gender, Partial<Record<Category, string[]>>> = {
   male: {
     TOP: ["t-shirt", "shirt", "polo", "jersey", "hoodie", "sweatshirt", "sweater", "vest"],
     BOTTOM: ["jeans", "trousers", "chinos", "cargos", "shorts", "joggers"],
-    DRESS: ["co-ord set", "jumpsuit", "tracksuit", "kurta set"],
+    DRESS: ["co-ord set", "jumpsuit", "tracksuit"],
     SHOE: ["sneakers", "loafers", "boots", "formal shoes", "sandals", "slippers", "sports shoes"],
     ACCESSORY: ["watch", "belt", "cap", "sunglasses", "chain", "bracelet", "tie", "bag", "headphones"],
     OUTERWEAR: ["jacket", "denim jacket", "blazer", "overshirt", "coat", "bomber", "cardigan"],
   },
   female: {
     TOP: ["top", "t-shirt", "blouse", "shirt", "crop top", "bodysuit", "camisole", "sweater", "hoodie"],
-    BOTTOM: ["jeans", "skirt", "trousers", "shorts", "leggings", "palazzo", "culottes", "cargos"],
+    BOTTOM: ["jeans", "skirt", "trousers", "shorts", "leggings", "culottes", "cargos"],
     DRESS: ["midi dress", "maxi dress", "mini dress", "bodycon", "slip dress", "gown", "jumpsuit", "co-ord set"],
     SHOE: ["heels", "flats", "sneakers", "boots", "sandals", "wedges", "mules", "slippers"],
     ACCESSORY: ["earrings", "necklace", "bag", "belt", "scarf", "sunglasses", "bracelet", "hair clip", "watch", "cap", "headphones"],
@@ -60,17 +61,32 @@ const SUBTYPES: Record<Gender, Partial<Record<Category, string[]>>> = {
   },
 };
 
-/** Garment types for a category; unknown gender gets the union of both lists. */
+/** Ethnic subcategories offered to a wardrobe owner (unknown gender gets all). */
+export function ethnicWearFor(gender: Gender | null | undefined): EthnicSubcategory[] {
+  if (gender !== "male" && gender !== "female") return ETHNIC_WEAR;
+  return ETHNIC_WEAR.filter((e) => !e.genders || e.genders.includes(gender));
+}
+
+/** Icon + label for the Ethnic / Indian Wear group in pickers and filters. */
+export const ETHNIC_GROUP_ICON: LucideIcon = Flower2;
+export const ETHNIC_GROUP_LABEL = "ethnic / indian";
+
+/**
+ * Garment types for a category; unknown gender gets the union of both lists.
+ * Ethnic wear (saree, kurta, juttis, …) is appended under its structural category.
+ */
 export function subtypesFor(
   gender: Gender | null | undefined,
   category: Category,
 ): string[] {
-  if (gender === "male" || gender === "female") return SUBTYPES[gender][category] ?? [];
-  const merged = [
-    ...(SUBTYPES.male[category] ?? []),
-    ...(SUBTYPES.female[category] ?? []),
-  ];
-  return Array.from(new Set(merged));
+  const western =
+    gender === "male" || gender === "female"
+      ? (SUBTYPES[gender][category] ?? [])
+      : [...(SUBTYPES.male[category] ?? []), ...(SUBTYPES.female[category] ?? [])];
+  const ethnic = ethnicWearFor(gender)
+    .filter((e) => e.category === category)
+    .map((e) => e.name);
+  return Array.from(new Set([...western, ...ethnic]));
 }
 
 /** Preset color swatches (name + hex). Stored as the lowercase name. */

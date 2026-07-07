@@ -2,7 +2,12 @@
 
 import { Search, X } from "lucide-react";
 import { STYLES, type Category } from "shared-types";
-import { CATEGORY_LABELS, PRESET_COLORS, categoriesFor } from "@/lib/wardrobe-constants";
+import {
+  CATEGORY_LABELS,
+  ETHNIC_GROUP_LABEL,
+  PRESET_COLORS,
+  categoriesFor,
+} from "@/lib/wardrobe-constants";
 import { useAuth } from "@/hooks/useAuth";
 import type { WardrobeFilters } from "@/hooks/useWardrobe";
 import { cn } from "@/lib/utils";
@@ -23,7 +28,7 @@ export function FilterBar({
   const categories = categoriesFor(user?.gender);
   const set = (patch: Partial<WardrobeFilters>) => onChange({ ...filters, ...patch });
   const hasFilters =
-    filters.category || filters.style || filters.color || filters.search;
+    filters.category || filters.ethnic || filters.style || filters.color || filters.search;
 
   return (
     <div className="mb-8 flex flex-col gap-4">
@@ -50,6 +55,13 @@ export function FilterBar({
             {CATEGORY_LABELS[c]}
           </Pill>
         ))}
+        {/* Ethnic / Indian Wear group: toggles independently, combines with a category. */}
+        <Pill
+          active={Boolean(filters.ethnic)}
+          onClick={() => set({ ethnic: filters.ethnic ? undefined : true })}
+        >
+          {ETHNIC_GROUP_LABEL}
+        </Pill>
 
         <span className="mx-2 h-4 w-px bg-border" />
 

@@ -7,12 +7,74 @@ export const CATEGORIES = ['TOP', 'BOTTOM', 'DRESS', 'SHOE', 'ACCESSORY', 'OUTER
 export type Category = (typeof CATEGORIES)[number];
 
 /** Style tags an item can carry. */
-export const STYLES = ['casual', 'formal', 'streetwear', 'smart-casual', 'sport'] as const;
+export const STYLES = ['casual', 'formal', 'streetwear', 'smart-casual', 'sport', 'ethnic'] as const;
 export type Style = (typeof STYLES)[number];
 
 /** Occasion tags an item can carry. */
-export const OCCASIONS = ['daily', 'work', 'party', 'gym', 'date'] as const;
+export const OCCASIONS = ['daily', 'work', 'party', 'gym', 'date', 'wedding', 'festival', 'puja'] as const;
 export type Occasion = (typeof OCCASIONS)[number];
+
+/**
+ * Ethnic / Indian Wear subcategories. Each maps a garment to the structural
+ * category that drives storage, filters and canvas slots (a saree occupies the
+ * full-body slot like a dress; a kurta is a top; juttis are footwear). The
+ * subcategory name is stored as the item's `subtype`.
+ */
+export interface EthnicSubcategory {
+  /** Display name, also saved as the item's subtype (e.g. "saree"). */
+  name: string;
+  /** Structural category the piece occupies. */
+  category: Category;
+  /** Wardrobes this is offered to by default; omitted = every gender. */
+  genders?: ('male' | 'female')[];
+}
+
+export const ETHNIC_WEAR: EthnicSubcategory[] = [
+  // Women
+  { name: 'saree', category: 'DRESS', genders: ['female'] },
+  { name: 'lehenga', category: 'BOTTOM', genders: ['female'] },
+  { name: 'choli', category: 'TOP', genders: ['female'] },
+  { name: 'salwar', category: 'BOTTOM', genders: ['female'] },
+  { name: 'churidar', category: 'BOTTOM' },
+  { name: 'kameez', category: 'TOP', genders: ['female'] },
+  { name: 'kurti', category: 'TOP', genders: ['female'] },
+  { name: 'kurta', category: 'TOP' },
+  { name: 'anarkali', category: 'DRESS', genders: ['female'] },
+  { name: 'ethnic gown', category: 'DRESS', genders: ['female'] },
+  { name: 'sharara', category: 'BOTTOM', genders: ['female'] },
+  { name: 'palazzo', category: 'BOTTOM', genders: ['female'] },
+  // Men
+  { name: 'kurta-pajama set', category: 'DRESS', genders: ['male'] },
+  { name: 'sherwani', category: 'DRESS', genders: ['male'] },
+  { name: 'nehru jacket', category: 'OUTERWEAR', genders: ['male'] },
+  { name: 'bandhgala', category: 'OUTERWEAR', genders: ['male'] },
+  { name: 'dhoti', category: 'BOTTOM', genders: ['male'] },
+  { name: 'pajama', category: 'BOTTOM', genders: ['male'] },
+  { name: 'pathani suit', category: 'DRESS', genders: ['male'] },
+  // Unisex footwear & accessories
+  { name: 'juttis', category: 'SHOE' },
+  { name: 'mojaris', category: 'SHOE' },
+  { name: 'kolhapuris', category: 'SHOE' },
+  { name: 'dupatta', category: 'ACCESSORY' },
+  { name: 'stole', category: 'ACCESSORY' },
+  { name: 'turban / safa', category: 'ACCESSORY', genders: ['male'] },
+  { name: 'potli bag', category: 'ACCESSORY' },
+  { name: 'jhumkas', category: 'ACCESSORY', genders: ['female'] },
+  { name: 'ethnic jewelry', category: 'ACCESSORY' },
+  { name: 'bangles', category: 'ACCESSORY', genders: ['female'] },
+  { name: 'maang tikka', category: 'ACCESSORY', genders: ['female'] },
+  { name: 'brooch', category: 'ACCESSORY' },
+];
+
+export const ETHNIC_SUBTYPE_NAMES: string[] = ETHNIC_WEAR.map((e) => e.name);
+
+/** Whether an item belongs to the Ethnic / Indian Wear group. */
+export function isEthnicItem(item: Pick<ClothingItem, 'subtype' | 'styles'>): boolean {
+  return (
+    (item.subtype !== null && ETHNIC_SUBTYPE_NAMES.includes(item.subtype)) ||
+    item.styles.includes('ethnic')
+  );
+}
 
 /**
  * Garment-extraction candidate labels produced by the rembg service:
@@ -58,6 +120,16 @@ export interface ClothingItem {
   occasions: string[];
   brand: string | null;
   notes: string | null;
+  /** Ids of items this piece pairs with as a set (lehenga + choli + dupatta). */
+  pairedItemIds: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+/** Whether two items are linked as a set (pairing reads as symmetric). */
+export function arePaired(
+  a: Pick<ClothingItem, 'id' | 'pairedItemIds'>,
+  b: Pick<ClothingItem, 'id' | 'pairedItemIds'>,
+): boolean {
+  return a.pairedItemIds.includes(b.id) || b.pairedItemIds.includes(a.id);
 }

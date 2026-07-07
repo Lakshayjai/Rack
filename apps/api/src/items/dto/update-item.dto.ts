@@ -54,4 +54,11 @@ export class UpdateItemDto {
   @IsString()
   @MaxLength(500)
   notes?: string;
+
+  /** Items this piece pairs with as a set (lehenga + choli + dupatta). */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Transform(toStringArray)
+  pairedItemIds?: string[];
 }
