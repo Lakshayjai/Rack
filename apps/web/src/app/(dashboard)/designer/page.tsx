@@ -158,7 +158,16 @@ function DesignerInner() {
     setSaving(true);
     try {
       const id = await persist();
-      if (id) toast.success("Outfit saved");
+      if (!id) return;
+      // Every save refreshes the Lookbook preview — export is no longer a separate,
+      // easy-to-skip step (outfits used to save with no preview at all).
+      try {
+        const png = canvasRef.current?.toPng();
+        if (png) await exportPng(id, png);
+        toast.success("Outfit saved");
+      } catch {
+        toast.success("Outfit saved — but the preview could not be generated");
+      }
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Save failed");
     } finally {

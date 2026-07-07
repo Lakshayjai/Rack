@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Pencil, Download, Trash2, CalendarPlus, Layers, Copy } from "lucide-react";
+import { Pencil, Download, Trash2, CalendarPlus, Layers, Copy, RefreshCw } from "lucide-react";
 import type { ClothingItem, Outfit } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +13,7 @@ import { CategoryBadge } from "@/components/ui/CategoryBadge";
 import { useToast } from "@/components/ui/Toast";
 import { useOutfits } from "@/hooks/useOutfits";
 import { ApiError } from "@/lib/api";
+import { renderOutfitPreview } from "@/lib/outfit-preview";
 import { thumb } from "@/lib/utils";
 
 /** Full detail view for an outfit: preview, pieces, worn history, and actions. */
@@ -33,11 +34,33 @@ export function OutfitDetailModal({
   onDuplicated: (o: Outfit) => void;
 }) {
   const toast = useToast();
-  const { markWorn, remove, duplicate } = useOutfits();
+  const { markWorn, remove, duplicate, exportPng } = useOutfits();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+  const [brokenUrl, setBrokenUrl] = useState<string | null>(null);
 
   if (!outfit) return null;
+
+  const previewUrl =
+    outfit.exportedImageUrl && outfit.exportedImageUrl !== brokenUrl
+      ? outfit.exportedImageUrl
+      : null;
+
+  /** Re-export the preview from the saved canvas state (offscreen render → upload). */
+  const handleRegenerate = async () => {
+    setRegenerating(true);
+    try {
+      const png = await renderOutfitPreview(outfit.canvasState);
+      const updated = await exportPng(outfit.id, png);
+      onChanged(updated);
+      toast.success("Preview regenerated");
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Could not regenerate the preview");
+    } finally {
+      setRegenerating(false);
+    }
+  };
 
   const usedItems = outfit.itemIds
     .map((id) => items.find((i) => i.id === id))
@@ -91,12 +114,22 @@ export function OutfitDetailModal({
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-[1fr_1fr]">
           {/* Preview */}
           <div className="relative aspect-[4/5] overflow-hidden border border-border bg-white">
-            {outfit.exportedImageUrl ? (
-              <Image src={outfit.exportedImageUrl} alt={outfit.name} fill sizes="320px" className="object-contain" />
+            {previewUrl ? (
+              <Image
+                src={previewUrl}
+                alt={outfit.name}
+                fill
+                sizes="320px"
+                className="object-contain"
+                onError={() => setBrokenUrl(previewUrl)}
+              />
             ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-text-muted">
+              <div className="flex h-full flex-col items-center justify-center gap-3 text-text-muted">
                 <Layers size={28} strokeWidth={1.25} />
-                <span className="text-xs">No exported preview</span>
+                <span className="text-xs">No preview yet</span>
+                <Button size="sm" variant="secondary" onClick={handleRegenerate} loading={regenerating}>
+                  <RefreshCw size={14} /> Generate preview
+                </Button>
               </div>
             )}
           </div>
@@ -171,6 +204,9 @@ export function OutfitDetailModal({
               </Button>
             </a>
           )}
+          <Button variant="ghost" onClick={handleRegenerate} loading={regenerating}>
+            <RefreshCw size={16} /> Regenerate preview
+          </Button>
           <Button variant="ghost" onClick={handleDuplicate} disabled={busy}>
             <Copy size={16} /> Duplicate
           </Button>

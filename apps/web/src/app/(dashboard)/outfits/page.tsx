@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Grid2x2, CalendarDays, Layers, Plus } from "lucide-react";
+import { Grid2x2, CalendarDays, Layers, Plus, RefreshCw } from "lucide-react";
 import type { Outfit, OutfitSort } from "shared-types";
 import { OUTFIT_SORTS } from "shared-types";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -14,6 +14,7 @@ import { OutfitCalendar } from "@/components/outfits/OutfitCalendar";
 import { OutfitDetailModal } from "@/components/outfits/OutfitDetailModal";
 import { useOutfits } from "@/hooks/useOutfits";
 import { useWardrobe } from "@/hooks/useWardrobe";
+import { renderOutfitPreview } from "@/lib/outfit-preview";
 import { cn } from "@/lib/utils";
 
 const SORT_LABELS: Record<OutfitSort, string> = {
@@ -26,13 +27,14 @@ type View = "grid" | "calendar";
 
 export default function OutfitsPage() {
   const toast = useToast();
-  const { list, markWorn, loading } = useOutfits();
+  const { list, markWorn, exportPng, loading } = useOutfits();
   const { items, fetchItems } = useWardrobe();
 
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const [sort, setSort] = useState<OutfitSort>("newest");
   const [view, setView] = useState<View>("grid");
   const [selected, setSelected] = useState<Outfit | null>(null);
+  const [backfilling, setBackfilling] = useState(false);
 
   useEffect(() => {
     list(sort)
@@ -63,6 +65,31 @@ export default function OutfitsPage() {
   };
 
   const isEmpty = !loading && outfits.length === 0;
+  const missingPreviews = outfits.filter((o) => !o.exportedImageUrl);
+
+  /** One-off backfill: re-export every preview-less outfit from its saved canvas state. */
+  const handleBackfill = async () => {
+    setBackfilling(true);
+    let done = 0;
+    try {
+      for (const outfit of missingPreviews) {
+        try {
+          const png = await renderOutfitPreview(outfit.canvasState);
+          applyUpdate(await exportPng(outfit.id, png));
+          done += 1;
+        } catch {
+          // Keep going — one unrenderable outfit shouldn't block the rest.
+        }
+      }
+      if (done === missingPreviews.length) {
+        toast.success(`Generated ${done} preview${done === 1 ? "" : "s"}`);
+      } else {
+        toast.error(`Generated ${done} of ${missingPreviews.length} previews — some failed`);
+      }
+    } finally {
+      setBackfilling(false);
+    }
+  };
 
   return (
     <div className="animate-fade-in-up">
@@ -101,6 +128,18 @@ export default function OutfitsPage() {
           </div>
         }
       />
+
+      {missingPreviews.length > 0 && view === "grid" && (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border border-accent-gold/40 bg-bg-secondary px-4 py-3 shadow-plume">
+          <p className="font-serif text-sm italic text-text-secondary">
+            {missingPreviews.length} look{missingPreviews.length === 1 ? " is" : "s are"} missing a
+            preview — generate them from their saved canvases.
+          </p>
+          <Button size="sm" variant="secondary" onClick={handleBackfill} loading={backfilling}>
+            <RefreshCw size={14} /> Generate previews
+          </Button>
+        </div>
+      )}
 
       {isEmpty ? (
         <EmptyState

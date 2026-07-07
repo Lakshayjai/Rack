@@ -15,9 +15,7 @@ import {
   type CanvasStatus,
 } from "@/types/canvas";
 import { layoutOutfit, roleFor } from "@/lib/outfit-layout";
-
-/** Background used for exported collage PNGs (soft off-white, like a flat-lay board). */
-const EXPORT_BACKGROUND = "#f7f4ee";
+import { EXPORT_BACKGROUND } from "@/lib/outfit-preview";
 
 const MAX_HISTORY = 20;
 // Custom per-object property we persist so saved outfits remember which item each image is.
