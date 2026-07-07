@@ -37,6 +37,21 @@ export function OutfitCard({ outfit, onOpen }: { outfit: Outfit; onOpen: (o: Out
           {format(new Date(outfit.createdAt), "MMM d")}
           {outfit.wornDates.length > 0 && ` · worn ${outfit.wornDates.length}×`}
         </p>
+        {outfit.tags.length > 0 && (
+          <p className="mt-1.5 flex flex-wrap gap-1">
+            {outfit.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="bg-bg-tertiary px-1.5 py-0.5 text-[9px] uppercase tracking-[0.12em] text-text-secondary"
+              >
+                {tag}
+              </span>
+            ))}
+            {outfit.tags.length > 3 && (
+              <span className="px-1 text-[9px] text-text-muted">+{outfit.tags.length - 3}</span>
+            )}
+          </p>
+        )}
       </div>
     </button>
   );

@@ -37,7 +37,7 @@ export default function RegisterPage() {
     void refresh();
   }, [refresh]);
   useEffect(() => {
-    if (user) router.replace("/wardrobe");
+    if (user) router.replace("/outfits/new");
   }, [user, router]);
 
   const {

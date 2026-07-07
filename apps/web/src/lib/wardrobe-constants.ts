@@ -20,30 +20,42 @@ export const CATEGORY_ICONS: Record<Category, LucideIcon> = {
 };
 
 /**
- * Categories offered per wardrobe owner. DRESS is a women's category;
- * a null/unknown gender sees everything.
+ * Gender-neutral display names. DRESS is the "full-body" slot (dresses, jumpsuits,
+ * co-ord sets) so it reads correctly for every wardrobe.
  */
-export function categoriesFor(gender: Gender | null | undefined): Category[] {
-  if (gender === "male") return ["TOP", "BOTTOM", "SHOE", "ACCESSORY", "OUTERWEAR"];
-  if (gender === "female") return ["TOP", "BOTTOM", "DRESS", "SHOE", "ACCESSORY", "OUTERWEAR"];
+export const CATEGORY_LABELS: Record<Category, string> = {
+  TOP: "top",
+  BOTTOM: "bottom",
+  DRESS: "full-body",
+  SHOE: "footwear",
+  ACCESSORY: "accessory",
+  OUTERWEAR: "outerwear",
+};
+
+/**
+ * Categories offered per wardrobe owner. Every gender gets the full set —
+ * DRESS ("full-body") covers jumpsuits and co-ord sets too.
+ */
+export function categoriesFor(_gender: Gender | null | undefined): Category[] {
   return ["TOP", "BOTTOM", "DRESS", "SHOE", "ACCESSORY", "OUTERWEAR"];
 }
 
 /** Gender-aware garment types offered per category (saved as `subtype`). */
 const SUBTYPES: Record<Gender, Partial<Record<Category, string[]>>> = {
   male: {
-    TOP: ["t-shirt", "shirt", "polo", "hoodie", "sweatshirt", "sweater", "vest"],
+    TOP: ["t-shirt", "shirt", "polo", "jersey", "hoodie", "sweatshirt", "sweater", "vest"],
     BOTTOM: ["jeans", "trousers", "chinos", "cargos", "shorts", "joggers"],
-    SHOE: ["sneakers", "loafers", "boots", "formal shoes", "sandals", "sports shoes"],
-    ACCESSORY: ["watch", "belt", "cap", "sunglasses", "chain", "bracelet", "tie"],
-    OUTERWEAR: ["jacket", "denim jacket", "blazer", "overshirt", "coat", "bomber"],
+    DRESS: ["co-ord set", "jumpsuit", "tracksuit", "kurta set"],
+    SHOE: ["sneakers", "loafers", "boots", "formal shoes", "sandals", "slippers", "sports shoes"],
+    ACCESSORY: ["watch", "belt", "cap", "sunglasses", "chain", "bracelet", "tie", "bag", "headphones"],
+    OUTERWEAR: ["jacket", "denim jacket", "blazer", "overshirt", "coat", "bomber", "cardigan"],
   },
   female: {
-    TOP: ["top", "t-shirt", "blouse", "shirt", "crop top", "bodysuit", "camisole", "sweater"],
-    BOTTOM: ["jeans", "skirt", "trousers", "shorts", "leggings", "palazzo", "culottes"],
-    DRESS: ["midi dress", "maxi dress", "mini dress", "bodycon", "slip dress", "gown", "jumpsuit"],
-    SHOE: ["heels", "flats", "sneakers", "boots", "sandals", "wedges", "mules"],
-    ACCESSORY: ["earrings", "necklace", "bag", "belt", "scarf", "sunglasses", "bracelet", "hair clip"],
+    TOP: ["top", "t-shirt", "blouse", "shirt", "crop top", "bodysuit", "camisole", "sweater", "hoodie"],
+    BOTTOM: ["jeans", "skirt", "trousers", "shorts", "leggings", "palazzo", "culottes", "cargos"],
+    DRESS: ["midi dress", "maxi dress", "mini dress", "bodycon", "slip dress", "gown", "jumpsuit", "co-ord set"],
+    SHOE: ["heels", "flats", "sneakers", "boots", "sandals", "wedges", "mules", "slippers"],
+    ACCESSORY: ["earrings", "necklace", "bag", "belt", "scarf", "sunglasses", "bracelet", "hair clip", "watch", "cap", "headphones"],
     OUTERWEAR: ["jacket", "cardigan", "blazer", "coat", "shrug", "denim jacket"],
   },
 };

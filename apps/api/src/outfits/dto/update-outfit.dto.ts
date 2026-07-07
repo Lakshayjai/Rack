@@ -29,4 +29,10 @@ export class UpdateOutfitDto {
   @IsArray()
   @IsString({ each: true })
   itemIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(24, { each: true })
+  tags?: string[];
 }

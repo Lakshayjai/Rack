@@ -10,6 +10,7 @@ import {
   Download,
   Eye,
   EyeOff,
+  Sparkles,
 } from "lucide-react";
 import type { CanvasController, CanvasStatus } from "@/types/canvas";
 import { cn } from "@/lib/utils";
@@ -20,12 +21,15 @@ export function CanvasToolbar({
   status,
   zonesVisible,
   onToggleZones,
+  onAutoArrange,
   onExport,
 }: {
   controller: CanvasController | null;
   status: CanvasStatus;
   zonesVisible: boolean;
   onToggleZones: () => void;
+  /** Re-lay the current pieces out as a styled flat-lay collage. */
+  onAutoArrange: () => void;
   onExport: () => void;
 }) {
   return (
@@ -63,6 +67,9 @@ export function CanvasToolbar({
 
       <Divider />
 
+      <ToolBtn label="Auto-arrange" onClick={onAutoArrange} disabled={!status.hasObjects}>
+        <Sparkles size={18} />
+      </ToolBtn>
       <ToolBtn label={zonesVisible ? "Hide zones" : "Show zones"} onClick={onToggleZones}>
         {zonesVisible ? <Eye size={18} /> : <EyeOff size={18} />}
       </ToolBtn>

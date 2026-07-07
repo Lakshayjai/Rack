@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS } from "./nav";
+import { NAV_ITEMS, isNavActive } from "./nav";
 import { cn } from "@/lib/utils";
 
 /** Mobile bottom navigation bar. Replaces the sidebar under md. */
@@ -11,7 +11,7 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-bg-secondary/95 backdrop-blur md:hidden">
       {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+        const active = isNavActive(pathname, href);
         return (
           <Link
             key={href}

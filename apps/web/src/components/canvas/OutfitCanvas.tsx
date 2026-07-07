@@ -14,6 +14,10 @@ import {
   type CanvasController,
   type CanvasStatus,
 } from "@/types/canvas";
+import { layoutOutfit, roleFor } from "@/lib/outfit-layout";
+
+/** Background used for exported collage PNGs (soft off-white, like a flat-lay board). */
+const EXPORT_BACKGROUND = "#f7f4ee";
 
 const MAX_HISTORY = 20;
 // Custom per-object property we persist so saved outfits remember which item each image is.
@@ -122,6 +126,77 @@ export const OutfitCanvas = forwardRef<
         canvas.setActiveObject(img);
         canvas.renderAll();
       },
+      autoLayout: async (items) => {
+        const canvas = canvasRef.current;
+        if (!canvas || items.length === 0) return;
+
+        // Load every image first — the layout needs real aspect ratios.
+        const loaded = await Promise.all(
+          items.map(async (item, index) => {
+            const img = await fabric.FabricImage.fromURL(item.url, {
+              crossOrigin: "anonymous",
+            });
+            return {
+              item,
+              img,
+              piece: {
+                id: String(index), // index key: the same item may appear twice
+                url: item.url,
+                role: roleFor(item.category),
+                subtype: item.subtype,
+                aspect: img.height / img.width,
+              },
+            };
+          }),
+        );
+
+        const placements = layoutOutfit(loaded.map((l) => l.piece));
+
+        // Replace the canvas contents in one history step.
+        restoring.current = true;
+        canvas.remove(...canvas.getObjects());
+        canvas.discardActiveObject();
+        for (const pl of placements) {
+          const { img, item } = loaded[Number(pl.id)];
+          img.scaleToWidth(pl.w * CANVAS_WIDTH);
+          img.set({
+            left: pl.cx * CANVAS_WIDTH,
+            top: pl.cy * CANVAS_HEIGHT,
+            originX: "center",
+            originY: "center",
+          });
+          (img as fabric.FabricImage & { itemId?: string }).itemId = item.id;
+          canvas.add(img);
+        }
+        canvas.renderAll();
+        restoring.current = false;
+        snapshot();
+      },
+      replaceSelected: async (url, itemId) => {
+        const canvas = canvasRef.current;
+        const active = canvas?.getActiveObject();
+        if (!canvas || !active || !(active instanceof fabric.FabricImage)) return;
+
+        const img = await fabric.FabricImage.fromURL(url, { crossOrigin: "anonymous" });
+        img.scaleToWidth(active.getScaledWidth());
+        img.set({
+          left: active.left,
+          top: active.top,
+          originX: active.originX,
+          originY: active.originY,
+          angle: active.angle,
+        });
+        (img as fabric.FabricImage & { itemId?: string }).itemId = itemId;
+
+        const index = canvas.getObjects().indexOf(active);
+        restoring.current = true;
+        canvas.remove(active);
+        canvas.insertAt(index, img);
+        canvas.setActiveObject(img);
+        canvas.renderAll();
+        restoring.current = false;
+        snapshot();
+      },
       undo: () => {
         if (historyIndex.current <= 0) return;
         historyIndex.current -= 1;
@@ -196,7 +271,13 @@ export const OutfitCanvas = forwardRef<
       toPng: () => {
         const c = canvasRef.current;
         if (!c) return "";
-        return c.toDataURL({ format: "png", multiplier: 2 });
+        // Export on a plain light ground so shared collages read as flat-lay boards.
+        const previous = c.backgroundColor;
+        c.backgroundColor = EXPORT_BACKGROUND;
+        const data = c.toDataURL({ format: "png", multiplier: 2 });
+        c.backgroundColor = previous;
+        c.renderAll();
+        return data;
       },
       usedItemIds: () => {
         const c = canvasRef.current;

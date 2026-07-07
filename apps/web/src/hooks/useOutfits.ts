@@ -16,6 +16,7 @@ export interface CreateOutfitInput {
   description?: string;
   canvasState: CanvasState;
   itemIds: string[];
+  tags?: string[];
 }
 
 /** Outfit data actions. Kept stateless (no global cache) — the gallery holds its own list. */
@@ -46,6 +47,11 @@ export function useOutfits() {
 
   const remove = useCallback((id: string) => api.delete(`/outfits/${id}`), []);
 
+  const duplicate = useCallback(
+    (id: string) => api.post<Outfit>(`/outfits/${id}/duplicate`),
+    [],
+  );
+
   const exportPng = useCallback(
     (id: string, imageData: string) =>
       api.post<Outfit>(`/outfits/${id}/export`, { imageData }),
@@ -57,5 +63,5 @@ export function useOutfits() {
     [],
   );
 
-  return { loading, list, get, create, update, remove, exportPng, markWorn };
+  return { loading, list, get, create, update, remove, duplicate, exportPng, markWorn };
 }

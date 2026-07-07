@@ -47,6 +47,7 @@ model Outfit {
   canvasState      Json
   exportedImageUrl String?
   itemIds          String[]
+  tags             String[]   @default([]) // e.g. season / occasion labels
   wornDates        DateTime[]
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt

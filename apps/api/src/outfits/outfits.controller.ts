@@ -51,6 +51,12 @@ export class OutfitsController {
     return this.outfits.update(user.id, id, dto);
   }
 
+  /** Duplicate an outfit as a starting point for a new look. */
+  @Post(':id/duplicate')
+  duplicate(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<Outfit> {
+    return this.outfits.duplicate(user.id, id);
+  }
+
   @Delete(':id')
   remove(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<{ success: true }> {
     return this.outfits.remove(user.id, id);

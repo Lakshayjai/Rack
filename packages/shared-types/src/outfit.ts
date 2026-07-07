@@ -8,6 +8,21 @@
  */
 export type CanvasState = Record<string, unknown>;
 
+/** Preset outfit tags (seasons + occasions) offered as quick chips in the UI. */
+export const OUTFIT_TAG_PRESETS = [
+  'spring',
+  'summer',
+  'monsoon',
+  'autumn',
+  'winter',
+  'casual',
+  'work',
+  'party',
+  'date',
+  'travel',
+  'festive',
+] as const;
+
 /** A saved outfit as returned by the API. */
 export interface Outfit {
   id: string;
@@ -17,6 +32,8 @@ export interface Outfit {
   canvasState: CanvasState;
   exportedImageUrl: string | null;
   itemIds: string[];
+  /** Free-form tags, e.g. season or occasion. */
+  tags: string[];
   wornDates: string[];
   createdAt: string;
   updatedAt: string;

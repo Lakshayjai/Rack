@@ -25,10 +25,18 @@ function toStringArray({ value }: { value: unknown }): string[] {
   return [];
 }
 
-/** Metadata accompanying an image upload (multipart fields). */
+/** Metadata accompanying an image upload (multipart fields or JSON body). */
 export class CreateItemDto {
   @IsIn(CATEGORIES)
   category!: Category;
+
+  /**
+   * Pre-extracted transparent PNG as a data URL (from the /items/extract review flow).
+   * When present, no file upload is required and background removal is skipped.
+   */
+  @IsOptional()
+  @IsString()
+  imageData?: string;
 
   /** Gender-aware garment type, e.g. "t-shirt", "jeans", "heels". */
   @IsOptional()

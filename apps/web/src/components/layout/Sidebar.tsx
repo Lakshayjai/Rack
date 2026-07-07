@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { NAV_ITEMS } from "./nav";
+import { NAV_ITEMS, isNavActive } from "./nav";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,7 @@ export function Sidebar() {
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-bg-secondary md:flex">
       {/* Wordmark */}
       <div className="flex flex-col items-center gap-1 px-6 pb-8 pt-10">
-        <Link href="/wardrobe" className="font-display text-[22px] tracking-[0.28em] text-text-primary">
+        <Link href="/outfits/new" className="font-display text-[22px] tracking-[0.28em] text-text-primary">
           WARDROBE
         </Link>
         <span className="font-serif text-sm italic text-accent-gold">the private atelier</span>
@@ -36,7 +36,7 @@ export function Sidebar() {
 
       <nav className="flex-1 space-y-1 px-6">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+          const active = isNavActive(pathname, href);
           return (
             <Link
               key={href}

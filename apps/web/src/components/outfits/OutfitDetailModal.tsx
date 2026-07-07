@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Pencil, Download, Trash2, CalendarPlus, Layers } from "lucide-react";
+import { Pencil, Download, Trash2, CalendarPlus, Layers, Copy } from "lucide-react";
 import type { ClothingItem, Outfit } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -22,15 +22,18 @@ export function OutfitDetailModal({
   onOpenChange,
   onChanged,
   onDeleted,
+  onDuplicated,
 }: {
   outfit: Outfit | null;
   items: ClothingItem[];
   onOpenChange: (open: boolean) => void;
   onChanged: (o: Outfit) => void;
   onDeleted: (id: string) => void;
+  /** Called with the freshly created copy. */
+  onDuplicated: (o: Outfit) => void;
 }) {
   const toast = useToast();
-  const { markWorn, remove } = useOutfits();
+  const { markWorn, remove, duplicate } = useOutfits();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -48,6 +51,20 @@ export function OutfitDetailModal({
       toast.success("Marked as worn today");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Could not mark worn");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    setBusy(true);
+    try {
+      const copy = await duplicate(outfit.id);
+      onDuplicated(copy);
+      toast.success("Outfit duplicated — opening the copy");
+      onOpenChange(false);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Could not duplicate");
     } finally {
       setBusy(false);
     }
@@ -87,6 +104,19 @@ export function OutfitDetailModal({
           <div className="flex flex-col gap-4">
             {outfit.description && (
               <p className="font-serif text-lg italic text-text-secondary">{outfit.description}</p>
+            )}
+
+            {outfit.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {outfit.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="border border-border px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-text-secondary"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
 
             <div>
@@ -141,6 +171,9 @@ export function OutfitDetailModal({
               </Button>
             </a>
           )}
+          <Button variant="ghost" onClick={handleDuplicate} disabled={busy}>
+            <Copy size={16} /> Duplicate
+          </Button>
           <Link href={`/designer?id=${outfit.id}`}>
             <Button variant="ghost">
               <Pencil size={16} /> Edit

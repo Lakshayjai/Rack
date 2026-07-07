@@ -8,7 +8,7 @@ A free, self-hosted **wardrobe manager + outfit designer**. Users upload clothin
 - **Shared:** `packages/shared-types` — domain types shared by both apps (built to `dist/` before use).
 - **DB:** PostgreSQL via Docker (`docker-compose.yml`), host port **5433** (native Postgres occupies 5432).
 - **Storage:** Cloudinary (user supplies keys in `apps/api/.env`).
-- **Background removal:** local Python `rembg` microservice (`services/rembg`, port 7000); `remove.bg` API optional fallback.
+- **Background removal / garment extraction:** local Python microservice (`services/rembg`, port 7000). `POST /extract` runs `u2net_cloth_seg` (parses worn photos into upper/lower/full-body garment cutouts, removing the person) + `isnet-general-use` whole-foreground removal, with OpenCV mask cleanup and PyMatting alpha matting; returns JSON candidates. `POST /remove` is the legacy single-PNG endpoint; `remove.bg` API optional fallback. Models download to `~/.u2net` on first use (~170MB each).
 - **Monorepo:** pnpm workspaces.
 
 ## Key local facts / decisions
@@ -18,6 +18,10 @@ A free, self-hosted **wardrobe manager + outfit designer**. Users upload clothin
 - Design system ("Atelier", redesigned 2026-07): **light-luxury ivory palette is the DEFAULT** (warm ivory surfaces, hairline taupe borders, ink text, antique-gold accent), sharp editorial edges (rounded-none), uppercase letter-spaced labels, `shadow-plume` soft shadows, `.eyebrow`/`.rule-gold` helpers. `.dark` class on `<html>` switches to an optional espresso "evening" theme via `useTheme`.
 - Fonts: **Cinzel** (display/wordmark/titles), **Cormorant Garamond** (editorial serif italics — `font-serif`), **Jost** (body/UI). Loaded in `apps/web/src/app/layout.tsx`.
 - Voice: pages are titled editorially — Wardrobe = "The Collection", Designer = "Composition Room", Outfits = "The Lookbook".
+- Upload flow (2026-07): photo → `POST /api/items/extract` (candidate cutouts + confidence) → user picks/refines (brush/eraser `MaskEditor`) → `POST /api/items` with `imageData` (base64). Falls back to the classic file upload when the service is down. Cutouts are normalized server-side (`normalizeCutout`: trim + 4% pad + ≤800px).
+- Category `DRESS` is displayed as **"Full-body"** (gender-neutral: dresses, jumpsuits, co-ord sets) via `CATEGORY_LABELS`; all categories are offered to every gender, subtypes stay gender-tailored.
+- Outfit builder: `/outfits/new` (slot picker + live preview) → `/designer?items=…` auto-arranges via `apps/web/src/lib/outfit-layout.ts` (pure flat-lay layout fn, shared by preview + Fabric canvas). Outfits have `tags` (String[]); `POST /api/outfits/:id/duplicate` copies a look.
+- **Home page is `/outfits/new`** ("Make Outfit", first nav item): root `/`, login, and wordmark links all land there. Fresh signups still go to `/wardrobe` (empty closet can't compose). Nav active-state uses `isNavActive` in `apps/web/src/components/layout/nav.ts` (longest-prefix wins, so `/outfits/new` doesn't also highlight "Outfits").
 
 ## Commands
 ```bash

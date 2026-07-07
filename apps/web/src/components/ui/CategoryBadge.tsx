@@ -1,4 +1,5 @@
 import type { Category } from "shared-types";
+import { CATEGORY_LABELS } from "@/lib/wardrobe-constants";
 import { cn } from "@/lib/utils";
 
 /** Couture category tag. Colors are defined as .badge-<CATEGORY> in globals.css. */
@@ -17,7 +18,7 @@ export function CategoryBadge({
         className,
       )}
     >
-      {category.toLowerCase()}
+      {CATEGORY_LABELS[category]}
     </span>
   );
 }

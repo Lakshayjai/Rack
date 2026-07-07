@@ -2,7 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { STYLES, type Category } from "shared-types";
-import { PRESET_COLORS, categoriesFor } from "@/lib/wardrobe-constants";
+import { CATEGORY_LABELS, PRESET_COLORS, categoriesFor } from "@/lib/wardrobe-constants";
 import { useAuth } from "@/hooks/useAuth";
 import type { WardrobeFilters } from "@/hooks/useWardrobe";
 import { cn } from "@/lib/utils";
@@ -47,7 +47,7 @@ export function FilterBar({
             active={filters.category === c}
             onClick={() => set({ category: filters.category === c ? undefined : (c as Category) })}
           >
-            {c.toLowerCase()}
+            {CATEGORY_LABELS[c]}
           </Pill>
         ))}
 

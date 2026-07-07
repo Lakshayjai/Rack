@@ -7,7 +7,7 @@ import { type Category, type ClothingItem } from "shared-types";
 import { thumb } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { categoriesFor } from "@/lib/wardrobe-constants";
+import { CATEGORY_LABELS, categoriesFor } from "@/lib/wardrobe-constants";
 
 export const DRAG_MIME = "application/x-wardrobe-item";
 
@@ -69,7 +69,7 @@ export function CanvasSidebar({
                 : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
             )}
           >
-            {c === "ALL" ? "all" : c.toLowerCase()}
+            {c === "ALL" ? "all" : CATEGORY_LABELS[c]}
           </button>
         ))}
       </div>

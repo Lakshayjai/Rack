@@ -8,7 +8,7 @@ import { Input, Textarea } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
 import { useAuth } from "@/hooks/useAuth";
-import { CATEGORY_ICONS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
+import { CATEGORY_ICONS, CATEGORY_LABELS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -97,7 +97,7 @@ export function EditItemModal({
                   )}
                 >
                   <Icon size={18} />
-                  {cat.toLowerCase()}
+                  {CATEGORY_LABELS[cat]}
                 </button>
               );
             })}

@@ -72,6 +72,11 @@ export default function OutfitsPage() {
         eyebrow="Outfits"
         action={
           <div className="flex items-center gap-2">
+            <Link href="/outfits/new">
+              <Button size="sm">
+                <Plus size={15} /> Make outfit
+              </Button>
+            </Link>
             {view === "grid" && (
               <select
                 value={sort}
@@ -101,11 +106,11 @@ export default function OutfitsPage() {
         <EmptyState
           icon={Layers}
           title="No outfits yet"
-          description="Head to the designer and compose your first look."
+          description="Pick pieces from your wardrobe and let the flat-lay compose itself."
           action={
-            <Link href="/designer">
+            <Link href="/outfits/new">
               <Button>
-                <Plus size={16} /> Design your first outfit
+                <Plus size={16} /> Make your first outfit
               </Button>
             </Link>
           }
@@ -124,6 +129,10 @@ export default function OutfitsPage() {
         onDeleted={(id) => {
           setOutfits((prev) => prev.filter((o) => o.id !== id));
           setSelected(null);
+        }}
+        onDuplicated={(copy) => {
+          setOutfits((prev) => [copy, ...prev]);
+          setSelected(copy);
         }}
       />
     </div>

@@ -4,3 +4,7 @@ uvicorn[standard]==0.34.0
 python-multipart==0.0.20
 pillow==11.0.0
 onnxruntime==1.20.1
+# Mask cleanup + alpha matting for /extract (also transitive deps of rembg — pinned loosely here).
+opencv-python-headless>=4.10
+pymatting>=1.1.12
+numpy>=1.26

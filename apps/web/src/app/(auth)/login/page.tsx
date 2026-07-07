@@ -28,7 +28,7 @@ export default function LoginPage() {
     void refresh();
   }, [refresh]);
   useEffect(() => {
-    if (user) router.replace("/wardrobe");
+    if (user) router.replace("/outfits/new");
   }, [user, router]);
 
   const {
@@ -40,7 +40,7 @@ export default function LoginPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       await login(values);
-      router.replace("/wardrobe");
+      router.replace("/outfits/new");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Login failed");
     }

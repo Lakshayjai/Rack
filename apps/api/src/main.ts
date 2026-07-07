@@ -10,6 +10,9 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
 
+  // Base64 PNG payloads (extracted cutout uploads, outfit exports) exceed the 100kb default.
+  app.useBodyParser('json', { limit: '15mb' });
+
   // All routes are namespaced under /api to match the frontend contract.
   app.setGlobalPrefix('api');
 

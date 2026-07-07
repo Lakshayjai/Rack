@@ -9,8 +9,9 @@ import {
   Save,
   Loader2,
   MousePointerClick,
+  Repeat,
 } from "lucide-react";
-import type { ClothingItem } from "shared-types";
+import { OUTFIT_TAG_PRESETS, type ClothingItem } from "shared-types";
 import { CanvasStage } from "@/components/canvas/CanvasStage";
 import { CanvasToolbar } from "@/components/canvas/CanvasToolbar";
 import { CanvasSidebar } from "@/components/canvas/CanvasSidebar";
@@ -20,12 +21,24 @@ import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
 import { useOutfits } from "@/hooks/useOutfits";
 import { ApiError } from "@/lib/api";
-import type { CanvasController, CanvasStatus } from "@/types/canvas";
+import { cn } from "@/lib/utils";
+import type { ArrangeItem, CanvasController, CanvasStatus } from "@/types/canvas";
+
+const toArrangeItem = (item: ClothingItem): ArrangeItem => ({
+  id: item.id,
+  url: item.imageUrl,
+  category: item.category,
+  subtype: item.subtype,
+});
 
 function DesignerInner() {
   const toast = useToast();
   const params = useSearchParams();
   const editId = params.get("id");
+  // Set by the "Make Outfit" builder: item ids to auto-arrange plus prefilled meta.
+  const itemsParam = params.get("items");
+  const nameParam = params.get("name");
+  const tagsParam = params.get("tags");
 
   const { items, fetchItems } = useWardrobe();
   const { get, create, update, exportPng } = useOutfits();
@@ -42,8 +55,12 @@ function DesignerInner() {
   const [outfitId, setOutfitId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  /** When armed, the next sidebar click swaps the selected piece instead of adding. */
+  const [swapArmed, setSwapArmed] = useState(false);
+  const arrangedRef = useRef(false);
 
   // Load wardrobe items for the sidebar.
   useEffect(() => {
@@ -62,6 +79,7 @@ function DesignerInner() {
         setOutfitId(outfit.id);
         setName(outfit.name);
         setDescription(outfit.description ?? "");
+        setTags(outfit.tags ?? []);
         // Give the canvas a tick to mount before loading state.
         setTimeout(() => void canvasRef.current?.loadState(outfit.canvasState), 50);
       } catch {
@@ -74,8 +92,44 @@ function DesignerInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editId]);
 
+  // Coming from the outfit builder: arrange the chosen pieces once items are loaded.
+  useEffect(() => {
+    if (!itemsParam || editId || arrangedRef.current || items.length === 0) return;
+    const chosen = itemsParam
+      .split(",")
+      .map((id) => items.find((i) => i.id === id))
+      .filter((i): i is ClothingItem => Boolean(i));
+    if (chosen.length === 0) return;
+    arrangedRef.current = true;
+    if (nameParam) setName(nameParam);
+    if (tagsParam) setTags(tagsParam.split(",").filter(Boolean));
+    // Give the canvas a tick to mount before arranging.
+    setTimeout(() => void canvasRef.current?.autoLayout(chosen.map(toArrangeItem)), 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, itemsParam, editId]);
+
   const addItem = (item: ClothingItem) => {
+    if (swapArmed && status.hasSelection) {
+      void canvasRef.current?.replaceSelected(item.imageUrl, item.id);
+      setSwapArmed(false);
+      return;
+    }
     void canvasRef.current?.addImage(item.imageUrl, item.id);
+  };
+
+  /** Re-run the flat-lay layout over whatever is currently on the canvas. */
+  const handleAutoArrange = () => {
+    const controller = canvasRef.current;
+    if (!controller) return;
+    const chosen = controller
+      .usedItemIds()
+      .map((id) => items.find((i) => i.id === id))
+      .filter((i): i is ClothingItem => Boolean(i));
+    if (chosen.length === 0) {
+      toast.error("Add some pieces to the canvas first");
+      return;
+    }
+    void controller.autoLayout(chosen.map(toArrangeItem));
   };
 
   /** Create or update the outfit; returns the id. */
@@ -91,6 +145,7 @@ function DesignerInner() {
       description: description.trim() || undefined,
       canvasState: controller.toState(),
       itemIds: controller.usedItemIds(),
+      tags,
     };
     const saved = outfitId
       ? await update(outfitId, payload)
@@ -151,6 +206,7 @@ function DesignerInner() {
             status={status}
             zonesVisible={zonesVisible}
             onToggleZones={() => setZonesVisible((v) => !v)}
+            onAutoArrange={handleAutoArrange}
             onExport={handleExport}
           />
 
@@ -160,26 +216,52 @@ function DesignerInner() {
             zonesVisible={zonesVisible}
           />
 
-          <div className="flex flex-col gap-4 border border-border bg-bg-secondary p-5 shadow-plume sm:flex-row sm:items-end">
-            <div className="flex-1">
-              <Input
-                label="Outfit name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Sunday linen"
-              />
+          <div className="flex flex-col gap-4 border border-border bg-bg-secondary p-5 shadow-plume">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+              <div className="flex-1">
+                <Input
+                  label="Outfit name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Sunday linen"
+                />
+              </div>
+              <div className="flex-1">
+                <Input
+                  label="Description (optional)"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="notes about this look"
+                />
+              </div>
+              <Button onClick={handleSave} loading={saving} disabled={!status.hasObjects}>
+                <Save size={16} /> Save outfit
+              </Button>
             </div>
-            <div className="flex-1">
-              <Input
-                label="Description (optional)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="notes about this look"
-              />
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="mr-1 text-[10px] uppercase tracking-[0.2em] text-text-muted">
+                Tags
+              </span>
+              {OUTFIT_TAG_PRESETS.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() =>
+                    setTags((cur) =>
+                      cur.includes(tag) ? cur.filter((t) => t !== tag) : [...cur, tag],
+                    )
+                  }
+                  className={cn(
+                    "border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
+                    tags.includes(tag)
+                      ? "border-text-primary bg-text-primary text-bg-primary"
+                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
+                  )}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
-            <Button onClick={handleSave} loading={saving} disabled={!status.hasObjects}>
-              <Save size={16} /> Save outfit
-            </Button>
           </div>
         </section>
 
@@ -192,6 +274,22 @@ function DesignerInner() {
             <div className="flex flex-col gap-2">
               <LayerBtn icon={ArrowUpToLine} label="Bring to front" onClick={() => canvasRef.current?.bringToFront()} />
               <LayerBtn icon={ArrowDownToLine} label="Send to back" onClick={() => canvasRef.current?.sendToBack()} />
+              <button
+                onClick={() => setSwapArmed((v) => !v)}
+                className={cn(
+                  "flex items-center gap-2 border px-3 py-2.5 text-[11px] uppercase tracking-[0.14em] transition-colors duration-200",
+                  swapArmed
+                    ? "border-accent-gold bg-accent-gold/10 text-accent-gold"
+                    : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
+                )}
+              >
+                <Repeat size={16} /> {swapArmed ? "Pick a piece…" : "Swap piece"}
+              </button>
+              {swapArmed && (
+                <p className="text-[10px] leading-relaxed text-text-muted">
+                  Click an item in the wardrobe panel to swap it in — position and size are kept.
+                </p>
+              )}
               <LayerBtn
                 icon={Trash2}
                 label="Remove"

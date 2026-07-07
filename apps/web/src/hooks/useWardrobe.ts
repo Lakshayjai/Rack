@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { ClothingItem, Category } from "shared-types";
+import type { ClothingItem, Category, ExtractionResult } from "shared-types";
 import { api } from "@/lib/api";
 import { useWardrobeStore } from "@/stores/wardrobeStore";
 
@@ -70,6 +70,23 @@ export function useWardrobe() {
     [addItem],
   );
 
+  /** Run garment extraction on a photo; returns candidate cutouts without saving. */
+  const extractItem = useCallback(async (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return api.upload<ExtractionResult>("/items/extract", fd);
+  }, []);
+
+  /** Save an approved cutout (transparent PNG data URL) as a new wardrobe item. */
+  const uploadExtracted = useCallback(
+    async (imageData: string, meta: UploadMetadata) => {
+      const item = await api.post<ClothingItem>("/items", { ...meta, imageData });
+      addItem(item);
+      return item;
+    },
+    [addItem],
+  );
+
   const editItem = useCallback(
     async (id: string, dto: Partial<UploadMetadata>) => {
       const item = await api.patch<ClothingItem>(`/items/${id}`, dto);
@@ -87,5 +104,15 @@ export function useWardrobe() {
     [removeItem],
   );
 
-  return { items, loaded, fetching, fetchItems, uploadItem, editItem, deleteItem };
+  return {
+    items,
+    loaded,
+    fetching,
+    fetchItems,
+    uploadItem,
+    extractItem,
+    uploadExtracted,
+    editItem,
+    deleteItem,
+  };
 }

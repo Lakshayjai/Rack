@@ -30,6 +30,7 @@ export class OutfitsService {
       canvasState: o.canvasState as CanvasState,
       exportedImageUrl: o.exportedImageUrl,
       itemIds: o.itemIds,
+      tags: o.tags,
       wornDates: o.wornDates.map((d) => d.toISOString()),
       createdAt: o.createdAt.toISOString(),
       updatedAt: o.updatedAt.toISOString(),
@@ -44,6 +45,7 @@ export class OutfitsService {
         description: dto.description ?? null,
         canvasState: dto.canvasState as Prisma.InputJsonValue,
         itemIds: dto.itemIds,
+        tags: dto.tags ?? [],
       },
     });
     return this.toDto(outfit);
@@ -99,9 +101,26 @@ export class OutfitsService {
           canvasState: dto.canvasState as Prisma.InputJsonValue,
         }),
         ...(dto.itemIds !== undefined && { itemIds: dto.itemIds }),
+        ...(dto.tags !== undefined && { tags: dto.tags }),
       },
     });
     return this.toDto(outfit);
+  }
+
+  /** Copies an outfit (canvas, pieces, tags) as a fresh starting point. */
+  async duplicate(userId: string, id: string): Promise<Outfit> {
+    const source = await this.findOne(userId, id);
+    const copy = await this.prisma.outfit.create({
+      data: {
+        userId,
+        name: `${source.name} (copy)`.slice(0, 80),
+        description: source.description,
+        canvasState: source.canvasState as Prisma.InputJsonValue,
+        itemIds: source.itemIds,
+        tags: source.tags,
+      },
+    });
+    return this.toDto(copy);
   }
 
   async remove(userId: string, id: string): Promise<{ success: true }> {

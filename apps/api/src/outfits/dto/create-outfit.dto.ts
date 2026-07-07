@@ -27,4 +27,11 @@ export class CreateOutfitDto {
   @IsArray()
   @IsString({ each: true })
   itemIds: string[] = [];
+
+  /** Season / occasion tags shown in the lookbook. */
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(24, { each: true })
+  tags?: string[];
 }

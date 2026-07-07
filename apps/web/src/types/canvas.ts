@@ -1,4 +1,12 @@
-import type { CanvasState } from "shared-types";
+import type { CanvasState, Category } from "shared-types";
+
+/** Minimal item info the canvas needs to auto-arrange a flat-lay collage. */
+export interface ArrangeItem {
+  id: string;
+  url: string;
+  category: Category;
+  subtype?: string | null;
+}
 
 /** Canvas dimensions (design units). The element is scaled responsively via CSS. */
 export const CANVAS_WIDTH = 600;
@@ -23,6 +31,10 @@ export interface CanvasStatus {
 export interface CanvasController {
   /** Add a wardrobe item's image to the canvas, optionally at drop coordinates (element pixels). */
   addImage: (url: string, itemId: string, dropX?: number, dropY?: number) => Promise<void>;
+  /** Clear the canvas and lay the given items out as a styled flat-lay collage. */
+  autoLayout: (items: ArrangeItem[]) => Promise<void>;
+  /** Swap the selected image for another item, keeping position, size and rotation. */
+  replaceSelected: (url: string, itemId: string) => Promise<void>;
   undo: () => void;
   redo: () => void;
   bringForward: () => void;
