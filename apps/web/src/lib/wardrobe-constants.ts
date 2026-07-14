@@ -5,7 +5,6 @@ import {
   Watch,
   Layers,
   Ribbon,
-  Flower2,
   type LucideIcon,
 } from "lucide-react";
 import { ETHNIC_WEAR, type Category, type EthnicSubcategory, type Gender } from "shared-types";
@@ -67,8 +66,7 @@ export function ethnicWearFor(gender: Gender | null | undefined): EthnicSubcateg
   return ETHNIC_WEAR.filter((e) => !e.genders || e.genders.includes(gender));
 }
 
-/** Icon + label for the Ethnic / Indian Wear group in pickers and filters. */
-export const ETHNIC_GROUP_ICON: LucideIcon = Flower2;
+/** Label for the Ethnic / Indian Wear group in pickers and filters. */
 export const ETHNIC_GROUP_LABEL = "ethnic / indian";
 
 /**
@@ -103,7 +101,3 @@ export const PRESET_COLORS: { name: string; hex: string }[] = [
   { name: "pink", hex: "#e58aa8" },
   { name: "cream", hex: "#f5f0e1" },
 ];
-
-export const HEX_BY_COLOR: Record<string, string> = Object.fromEntries(
-  PRESET_COLORS.map((c) => [c.name, c.hex]),
-);

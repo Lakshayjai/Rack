@@ -10,7 +10,6 @@ interface WardrobeState {
   addItem: (item: ClothingItem) => void;
   updateItem: (item: ClothingItem) => void;
   removeItem: (id: string) => void;
-  setLoaded: (loaded: boolean) => void;
 }
 
 /**
@@ -27,7 +26,6 @@ export const useWardrobeStore = create<WardrobeState>()(
       updateItem: (item) =>
         set((s) => ({ items: s.items.map((i) => (i.id === item.id ? item : i)) })),
       removeItem: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
-      setLoaded: (loaded) => set({ loaded }),
     }),
     {
       name: "wardrobe-cache",

@@ -68,14 +68,6 @@ export const ETHNIC_WEAR: EthnicSubcategory[] = [
 
 export const ETHNIC_SUBTYPE_NAMES: string[] = ETHNIC_WEAR.map((e) => e.name);
 
-/** Whether an item belongs to the Ethnic / Indian Wear group. */
-export function isEthnicItem(item: Pick<ClothingItem, 'subtype' | 'styles'>): boolean {
-  return (
-    (item.subtype !== null && ETHNIC_SUBTYPE_NAMES.includes(item.subtype)) ||
-    item.styles.includes('ethnic')
-  );
-}
-
 /**
  * Garment-extraction candidate labels produced by the rembg service:
  * cloth-parsing classes (`upper` / `lower` / `full`) when a person is wearing the
