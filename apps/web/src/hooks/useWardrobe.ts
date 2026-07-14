@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { ClothingItem, Category, ExtractionResult } from "shared-types";
+import type { Category, ClothingItem, ExtractionResult, PaginatedItems } from "shared-types";
 import { api } from "@/lib/api";
 import { useWardrobeStore } from "@/stores/wardrobeStore";
 
@@ -12,13 +12,6 @@ export interface WardrobeFilters {
   style?: string;
   color?: string;
   search?: string;
-}
-
-interface PaginatedItems {
-  items: ClothingItem[];
-  total: number;
-  page: number;
-  limit: number;
 }
 
 export interface UploadMetadata {

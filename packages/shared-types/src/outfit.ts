@@ -42,3 +42,11 @@ export interface Outfit {
 /** Sort options for the outfit gallery. */
 export const OUTFIT_SORTS = ['newest', 'most-worn', 'name-asc'] as const;
 export type OutfitSort = (typeof OUTFIT_SORTS)[number];
+
+/** Response of GET /api/outfits. */
+export interface PaginatedOutfits {
+  outfits: Outfit[];
+  total: number;
+  page: number;
+  limit: number;
+}

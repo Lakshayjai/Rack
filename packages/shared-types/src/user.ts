@@ -21,3 +21,10 @@ export interface JwtPayload {
   sub: string; // user id
   email: string;
 }
+
+/** Response of GET /api/users/stats — aggregate counts for the profile page. */
+export interface UserStats {
+  itemCount: number;
+  outfitCount: number;
+  totalWears: number;
+}

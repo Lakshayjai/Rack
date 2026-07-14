@@ -1,18 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ClothingItem as PrismaItem, Prisma } from '@prisma/client';
-import { ETHNIC_SUBTYPE_NAMES, type ClothingItem, type Category } from 'shared-types';
+import {
+  ETHNIC_SUBTYPE_NAMES,
+  type ClothingItem,
+  type Category,
+  type PaginatedItems,
+} from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadService } from '../upload/upload.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ListItemsDto } from './dto/list-items.dto';
-
-export interface PaginatedItems {
-  items: ClothingItem[];
-  total: number;
-  page: number;
-  limit: number;
-}
 
 @Injectable()
 export class ItemsService {

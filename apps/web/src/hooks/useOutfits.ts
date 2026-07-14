@@ -1,15 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { CanvasState, Outfit, OutfitSort } from "shared-types";
+import type { CanvasState, Outfit, OutfitSort, PaginatedOutfits } from "shared-types";
 import { api } from "@/lib/api";
-
-interface PaginatedOutfits {
-  outfits: Outfit[];
-  total: number;
-  page: number;
-  limit: number;
-}
 
 export interface CreateOutfitInput {
   name: string;

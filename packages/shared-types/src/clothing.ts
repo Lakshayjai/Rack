@@ -125,3 +125,11 @@ export function arePaired(
 ): boolean {
   return a.pairedItemIds.includes(b.id) || b.pairedItemIds.includes(a.id);
 }
+
+/** Response of GET /api/items. */
+export interface PaginatedItems {
+  items: ClothingItem[];
+  total: number;
+  page: number;
+  limit: number;
+}

@@ -9,10 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import type { Outfit, PublicUser } from 'shared-types';
+import type { Outfit, PaginatedOutfits, PublicUser } from 'shared-types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { OutfitsService, PaginatedOutfits } from './outfits.service';
+import { OutfitsService } from './outfits.service';
 import { CreateOutfitDto } from './dto/create-outfit.dto';
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
 import { ListOutfitsDto } from './dto/list-outfits.dto';

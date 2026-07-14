@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import type { Gender, PublicUser } from 'shared-types';
+import type { Gender, PublicUser, UserStats } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { toPublicUser } from './public-user.mapper';
-
-export interface UserStats {
-  itemCount: number;
-  outfitCount: number;
-  totalWears: number;
-}
 
 @Injectable()
 export class UsersService {

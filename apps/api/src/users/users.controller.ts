@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
-import type { PublicUser } from 'shared-types';
+import type { PublicUser, UserStats } from 'shared-types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { UsersService, UserStats } from './users.service';
+import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Controller('users')

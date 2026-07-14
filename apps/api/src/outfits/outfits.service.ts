@@ -1,18 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Outfit as PrismaOutfit, Prisma } from '@prisma/client';
-import type { CanvasState, Outfit, OutfitSort } from 'shared-types';
+import type { CanvasState, Outfit, OutfitSort, PaginatedOutfits } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadService } from '../upload/upload.service';
 import { CreateOutfitDto } from './dto/create-outfit.dto';
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
 import { ListOutfitsDto } from './dto/list-outfits.dto';
-
-export interface PaginatedOutfits {
-  outfits: Outfit[];
-  total: number;
-  page: number;
-  limit: number;
-}
 
 @Injectable()
 export class OutfitsService {

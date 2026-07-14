@@ -18,13 +18,14 @@ import type {
   ClothingItem,
   ExtractionLabel,
   ExtractionResult,
+  PaginatedItems,
+  PublicUser,
 } from 'shared-types';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import type { PublicUser } from 'shared-types';
 import { ImageProcessingService } from '../image-processing/image-processing.service';
 import { UploadService } from '../upload/upload.service';
-import { ItemsService, PaginatedItems } from './items.service';
+import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ListItemsDto } from './dto/list-items.dto';

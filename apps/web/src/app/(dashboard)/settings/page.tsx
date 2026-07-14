@@ -4,15 +4,10 @@ import { useEffect, useState } from "react";
 import { Moon, Sun, Shirt, Layers, CalendarCheck } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
+import type { UserStats } from "shared-types";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { api } from "@/lib/api";
-
-interface UserStats {
-  itemCount: number;
-  outfitCount: number;
-  totalWears: number;
-}
 
 /** Profile page: user card, wardrobe stats, and the light/dark theme toggle. */
 export default function SettingsPage() {
