@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import type { Gender, PublicUser } from "shared-types";
-import { api, ApiError } from "@/lib/api";
+import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/authStore";
 
 interface Credentials {
@@ -21,15 +21,14 @@ interface RegisterInput extends Credentials {
 export function useAuth() {
   const { user, loading, setUser, setLoading } = useAuthStore();
 
-  /** Fetch the current user from the cookie session; clears state on 401. */
+  /** Fetch the current user from the cookie session; clears state when it fails. */
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
       const me = await api.get<PublicUser>("/auth/me");
       setUser(me);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) setUser(null);
-      else setUser(null);
+    } catch {
+      setUser(null);
     } finally {
       setLoading(false);
     }
