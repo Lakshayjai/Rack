@@ -86,4 +86,55 @@ toasts on the web). The cleanup below is therefore targeted, not structural.
 
 ## 4. What changed
 
-_Filled in at the end of the cleanup — see the final section of this file._
+Completed 2026-07-14. One concern per commit; every phase was verified with
+`pnpm --filter shared-types build`, `pnpm --filter api build`,
+`pnpm --filter web typecheck` and `pnpm --filter web build` before committing.
+
+### Deleted
+- Default create-next-app SVGs in `apps/web/public` (all unreferenced).
+- Broken Nest e2e boilerplate (`test/app.e2e-spec.ts`, `jest-e2e.json`) and the
+  `test:*` scripts that referenced it. `pnpm --filter api test` still works
+  (jest with `--passWithNoTests`).
+- Unused dependencies — web: `react-window`, `@types/react-window`,
+  `@radix-ui/react-select`, `@radix-ui/react-popover`; api: `supertest`,
+  `@types/supertest`, `ts-node`, `ts-loader`, `tsconfig-paths`, `source-map-support`.
+- Unused exports: `ETHNIC_GROUP_ICON`, `HEX_BY_COLOR`, `setLoaded`, `isEthnicItem`.
+
+### Fixed
+- `packages/shared-types/tsconfig.json` had `"ignoreDeprecations": "6.0"`,
+  which TypeScript 5.9 rejects — the package did not build at all.
+- Startup `console.log` in `apps/api/src/main.ts` → Nest `Logger`.
+- Type-unsafe `setHeaders` callback in `main.ts` and non-Error Promise
+  rejection in `upload.service.ts` (the API's only lint errors).
+- Stale docs: root README no longer claims a dark-by-default UI; the DRESS
+  category comment in shared-types no longer says "female users only".
+
+### Refactored (no behavior change)
+- **api**: `toPublicUser` extracted to `users/public-user.mapper.ts`
+  (was duplicated 4×); string-array DTO transforms deduplicated into
+  `items/dto/string-array.transform.ts`.
+- **web**: `UploadModal` (697 lines) split into `wardrobe/upload/`
+  (`ReviewStep`, `DetailsStep`, `CandidateThumb`, `alpha-bbox`, `types`);
+  shared form building blocks (`Field`, `ChipRow`, `ColorSwatchRow`,
+  `toggleValue`, `CHECKER`) extracted to `wardrobe/form-fields.tsx` and used
+  by UploadModal, EditItemModal and MaskEditor; the duplicated outfit-tag
+  chips became `outfits/TagPresetPicker`; `useAuth.refresh`'s redundant
+  401 branch collapsed.
+- **shared-types**: `PaginatedItems`, `PaginatedOutfits` and `UserStats`
+  moved here from their duplicate definitions in the api services and web
+  hooks/pages. Wire shapes unchanged.
+
+### Documented
+- Root README rewritten (accurate features, clone-to-running steps, per-service
+  run commands, layout map). `apps/api`, `apps/web` and `services/rembg` got
+  short accurate READMEs replacing framework boilerplate. Route pages received
+  file-header comments (everything else already had them).
+
+### Known remaining lint debt (pre-existing, intentionally untouched)
+`pnpm --filter web lint` reports 6 errors from the React hooks-compiler rules
+(`react-hooks/set-state-in-effect` ×5, `react-hooks/refs` ×1) in
+`useTheme`, `EditItemModal`, `MaskEditor`, `UploadModal` and the designer page.
+All predate this cleanup and flag established hydrate-state-from-props/storage
+patterns; fixing them means restructuring state flows (key-based remounts,
+`useSyncExternalStore`), which was out of scope under the "never change
+behavior" rule. The API lints clean.

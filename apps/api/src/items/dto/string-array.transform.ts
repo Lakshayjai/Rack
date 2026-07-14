@@ -23,7 +23,11 @@ export function toStringArray({ value }: { value: unknown }): string[] {
 }
 
 /** For optional (PATCH) fields: an absent value stays undefined so it isn't updated. */
-export function toOptionalStringArray({ value }: { value: unknown }): string[] | undefined {
+export function toOptionalStringArray({
+  value,
+}: {
+  value: unknown;
+}): string[] | undefined {
   if (value === undefined) return undefined;
   return parse(value);
 }

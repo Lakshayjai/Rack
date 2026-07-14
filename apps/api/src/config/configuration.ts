@@ -37,7 +37,8 @@ export default (): AppConfig => ({
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:3000',
   authDisabled: process.env.AUTH_DISABLED === 'true',
   publicApiUrl:
-    process.env.PUBLIC_API_URL ?? `http://localhost:${process.env.PORT ?? '3005'}`,
+    process.env.PUBLIC_API_URL ??
+    `http://localhost:${process.env.PORT ?? '3005'}`,
   jwt: {
     secret: process.env.JWT_SECRET ?? 'insecure-dev-secret',
     expiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
@@ -50,7 +51,8 @@ export default (): AppConfig => ({
   rembg: {
     url: rembgUrl,
     extractUrl:
-      process.env.REMBG_EXTRACT_URL ?? rembgUrl.replace(/\/remove\/?$/, '/extract'),
+      process.env.REMBG_EXTRACT_URL ??
+      rembgUrl.replace(/\/remove\/?$/, '/extract'),
     removeBgApiKey: process.env.REMOVE_BG_API_KEY ?? '',
   },
 });

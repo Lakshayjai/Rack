@@ -72,7 +72,10 @@ export class ItemsService {
     const and: Prisma.ClothingItemWhereInput[] = [];
     if (query.ethnic) {
       and.push({
-        OR: [{ subtype: { in: ETHNIC_SUBTYPE_NAMES } }, { styles: { has: 'ethnic' } }],
+        OR: [
+          { subtype: { in: ETHNIC_SUBTYPE_NAMES } },
+          { styles: { has: 'ethnic' } },
+        ],
       });
     }
     if (query.search) {
@@ -98,17 +101,28 @@ export class ItemsService {
       this.prisma.clothingItem.count({ where }),
     ]);
 
-    return { items: rows.map((r) => this.toDto(r)), total, page: query.page, limit: query.limit };
+    return {
+      items: rows.map((r) => this.toDto(r)),
+      total,
+      page: query.page,
+      limit: query.limit,
+    };
   }
 
   /** Fetches one item, enforcing ownership. */
   async findOne(userId: string, id: string): Promise<ClothingItem> {
-    const item = await this.prisma.clothingItem.findFirst({ where: { id, userId } });
+    const item = await this.prisma.clothingItem.findFirst({
+      where: { id, userId },
+    });
     if (!item) throw new NotFoundException('Item not found');
     return this.toDto(item);
   }
 
-  async update(userId: string, id: string, dto: UpdateItemDto): Promise<ClothingItem> {
+  async update(
+    userId: string,
+    id: string,
+    dto: UpdateItemDto,
+  ): Promise<ClothingItem> {
     await this.findOne(userId, id); // ownership check
     const item = await this.prisma.clothingItem.update({
       where: { id },
@@ -120,7 +134,9 @@ export class ItemsService {
         ...(dto.occasions !== undefined && { occasions: dto.occasions }),
         ...(dto.brand !== undefined && { brand: dto.brand }),
         ...(dto.notes !== undefined && { notes: dto.notes }),
-        ...(dto.pairedItemIds !== undefined && { pairedItemIds: dto.pairedItemIds }),
+        ...(dto.pairedItemIds !== undefined && {
+          pairedItemIds: dto.pairedItemIds,
+        }),
       },
     });
     return this.toDto(item);

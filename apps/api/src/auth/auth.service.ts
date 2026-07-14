@@ -29,20 +29,29 @@ export class AuthService {
 
   /** Creates a new user with a bcrypt-hashed password. */
   async register(dto: RegisterDto): Promise<PublicUser> {
-    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (existing) {
       throw new ConflictException('An account with this email already exists');
     }
     const hashed = await bcrypt.hash(dto.password, BCRYPT_SALT_ROUNDS);
     const user = await this.prisma.user.create({
-      data: { email: dto.email, username: dto.username, password: hashed, gender: dto.gender },
+      data: {
+        email: dto.email,
+        username: dto.username,
+        password: hashed,
+        gender: dto.gender,
+      },
     });
     return toPublicUser(user);
   }
 
   /** Verifies credentials and returns the public user on success. */
   async validateCredentials(dto: LoginDto): Promise<PublicUser> {
-    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }

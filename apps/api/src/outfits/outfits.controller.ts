@@ -25,7 +25,10 @@ export class OutfitsController {
   constructor(private readonly outfits: OutfitsService) {}
 
   @Post()
-  create(@CurrentUser() user: PublicUser, @Body() dto: CreateOutfitDto): Promise<Outfit> {
+  create(
+    @CurrentUser() user: PublicUser,
+    @Body() dto: CreateOutfitDto,
+  ): Promise<Outfit> {
     return this.outfits.create(user.id, dto);
   }
 
@@ -38,7 +41,10 @@ export class OutfitsController {
   }
 
   @Get(':id')
-  findOne(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<Outfit> {
+  findOne(
+    @CurrentUser() user: PublicUser,
+    @Param('id') id: string,
+  ): Promise<Outfit> {
     return this.outfits.findOne(user.id, id);
   }
 
@@ -53,12 +59,18 @@ export class OutfitsController {
 
   /** Duplicate an outfit as a starting point for a new look. */
   @Post(':id/duplicate')
-  duplicate(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<Outfit> {
+  duplicate(
+    @CurrentUser() user: PublicUser,
+    @Param('id') id: string,
+  ): Promise<Outfit> {
     return this.outfits.duplicate(user.id, id);
   }
 
   @Delete(':id')
-  remove(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<{ success: true }> {
+  remove(
+    @CurrentUser() user: PublicUser,
+    @Param('id') id: string,
+  ): Promise<{ success: true }> {
     return this.outfits.remove(user.id, id);
   }
 

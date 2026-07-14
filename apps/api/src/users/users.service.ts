@@ -11,7 +11,10 @@ export class UsersService {
   async getStats(userId: string): Promise<UserStats> {
     const [itemCount, outfits] = await Promise.all([
       this.prisma.clothingItem.count({ where: { userId } }),
-      this.prisma.outfit.findMany({ where: { userId }, select: { wornDates: true } }),
+      this.prisma.outfit.findMany({
+        where: { userId },
+        select: { wornDates: true },
+      }),
     ]);
     const totalWears = outfits.reduce((sum, o) => sum + o.wornDates.length, 0);
     return { itemCount, outfitCount: outfits.length, totalWears };
@@ -19,7 +22,10 @@ export class UsersService {
 
   /** Updates profile preferences (currently the gender that tailors the UI). */
   async updateProfile(userId: string, gender: Gender): Promise<PublicUser> {
-    const user = await this.prisma.user.update({ where: { id: userId }, data: { gender } });
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { gender },
+    });
     return toPublicUser(user);
   }
 }

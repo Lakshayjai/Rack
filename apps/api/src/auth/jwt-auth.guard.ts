@@ -47,7 +47,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!user) {
       user = await this.prisma.user.create({
         // Placeholder password — this account cannot log in via /auth/login.
-        data: { email: 'dev@wardrobe.local', username: 'dev', password: 'auth-disabled' },
+        data: {
+          email: 'dev@wardrobe.local',
+          username: 'dev',
+          password: 'auth-disabled',
+        },
       });
     }
 

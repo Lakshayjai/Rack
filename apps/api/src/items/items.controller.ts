@@ -51,7 +51,10 @@ const IMAGE_UPLOAD_OPTIONS = {
     cb: (error: Error | null, accept: boolean) => void,
   ) => {
     if (!ALLOWED_MIME.includes(file.mimetype)) {
-      cb(new BadRequestException('Only JPG, PNG or WebP images are allowed'), false);
+      cb(
+        new BadRequestException('Only JPG, PNG or WebP images are allowed'),
+        false,
+      );
     } else {
       cb(null, true);
     }
@@ -61,7 +64,8 @@ const IMAGE_UPLOAD_OPTIONS = {
 /** Decodes a `data:image/png;base64,...` URL, enforcing a size cap. */
 function decodeImageData(imageData: string): Buffer {
   const match = /^data:image\/(png|jpeg|webp);base64,(.+)$/.exec(imageData);
-  if (!match) throw new BadRequestException('imageData must be a base64 image data URL');
+  if (!match)
+    throw new BadRequestException('imageData must be a base64 image data URL');
   const buffer = Buffer.from(match[2], 'base64');
   if (buffer.length === 0 || buffer.length > MAX_IMAGE_DATA_BYTES) {
     throw new BadRequestException('imageData is empty or too large');
@@ -92,7 +96,9 @@ export class ItemsController {
   ): Promise<ClothingItem> {
     let processed: Buffer;
     if (dto.imageData) {
-      processed = await this.imageProcessing.normalizeCutout(decodeImageData(dto.imageData));
+      processed = await this.imageProcessing.normalizeCutout(
+        decodeImageData(dto.imageData),
+      );
     } else if (file) {
       processed = await this.imageProcessing.process(file.buffer, dto.category);
     } else {
@@ -164,7 +170,10 @@ export class ItemsController {
   }
 
   @Get(':id')
-  findOne(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<ClothingItem> {
+  findOne(
+    @CurrentUser() user: PublicUser,
+    @Param('id') id: string,
+  ): Promise<ClothingItem> {
     return this.items.findOne(user.id, id);
   }
 
@@ -178,7 +187,10 @@ export class ItemsController {
   }
 
   @Delete(':id')
-  remove(@CurrentUser() user: PublicUser, @Param('id') id: string): Promise<{ success: true }> {
+  remove(
+    @CurrentUser() user: PublicUser,
+    @Param('id') id: string,
+  ): Promise<{ success: true }> {
     return this.items.remove(user.id, id);
   }
 }

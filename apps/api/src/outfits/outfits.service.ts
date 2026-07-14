@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Outfit as PrismaOutfit, Prisma } from '@prisma/client';
-import type { CanvasState, Outfit, OutfitSort, PaginatedOutfits } from 'shared-types';
+import type {
+  CanvasState,
+  Outfit,
+  OutfitSort,
+  PaginatedOutfits,
+} from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadService } from '../upload/upload.service';
 import { CreateOutfitDto } from './dto/create-outfit.dto';
@@ -44,7 +49,10 @@ export class OutfitsService {
     return this.toDto(outfit);
   }
 
-  async findAll(userId: string, query: ListOutfitsDto): Promise<PaginatedOutfits> {
+  async findAll(
+    userId: string,
+    query: ListOutfitsDto,
+  ): Promise<PaginatedOutfits> {
     const orderBy = this.orderByFor(query.sort);
     const where: Prisma.OutfitWhereInput = { userId };
 
@@ -78,12 +86,18 @@ export class OutfitsService {
   }
 
   async findOne(userId: string, id: string): Promise<Outfit> {
-    const outfit = await this.prisma.outfit.findFirst({ where: { id, userId } });
+    const outfit = await this.prisma.outfit.findFirst({
+      where: { id, userId },
+    });
     if (!outfit) throw new NotFoundException('Outfit not found');
     return this.toDto(outfit);
   }
 
-  async update(userId: string, id: string, dto: UpdateOutfitDto): Promise<Outfit> {
+  async update(
+    userId: string,
+    id: string,
+    dto: UpdateOutfitDto,
+  ): Promise<Outfit> {
     await this.findOne(userId, id);
     const outfit = await this.prisma.outfit.update({
       where: { id },
@@ -118,7 +132,8 @@ export class OutfitsService {
 
   async remove(userId: string, id: string): Promise<{ success: true }> {
     const outfit = await this.findOne(userId, id);
-    if (outfit.exportedImageUrl) await this.upload.deleteByUrl(outfit.exportedImageUrl);
+    if (outfit.exportedImageUrl)
+      await this.upload.deleteByUrl(outfit.exportedImageUrl);
     await this.prisma.outfit.delete({ where: { id } });
     return { success: true };
   }
@@ -126,7 +141,8 @@ export class OutfitsService {
   /** Stores the exported PNG (base64 data URL) and saves its URL on the outfit. */
   async export(userId: string, id: string, imageData: string): Promise<Outfit> {
     const existing = await this.findOne(userId, id);
-    if (existing.exportedImageUrl) await this.upload.deleteByUrl(existing.exportedImageUrl);
+    if (existing.exportedImageUrl)
+      await this.upload.deleteByUrl(existing.exportedImageUrl);
 
     const base64 = imageData.replace(/^data:image\/png;base64,/, '');
     const buffer = Buffer.from(base64, 'base64');
@@ -145,7 +161,11 @@ export class OutfitsService {
     const when = date ? new Date(date) : new Date();
     const outfit = await this.prisma.outfit.update({
       where: { id },
-      data: { wornDates: { set: [...existing.wornDates.map((d) => new Date(d)), when] } },
+      data: {
+        wornDates: {
+          set: [...existing.wornDates.map((d) => new Date(d)), when],
+        },
+      },
     });
     return this.toDto(outfit);
   }

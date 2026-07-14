@@ -96,7 +96,9 @@ export class ImageProcessingService {
     const viaRemoveBg = await this.tryRemoveBg(resized);
     if (viaRemoveBg) return this.normalizeCutout(viaRemoveBg);
 
-    this.logger.warn('Background removal unavailable; storing image without removal.');
+    this.logger.warn(
+      'Background removal unavailable; storing image without removal.',
+    );
     return resized;
   }
 
@@ -157,7 +159,10 @@ export class ImageProcessingService {
     try {
       const trimmed = await sharp(cutout).trim().png().toBuffer();
       const meta = await sharp(trimmed).metadata();
-      const pad = Math.max(8, Math.round(Math.max(meta.width ?? 0, meta.height ?? 0) * 0.04));
+      const pad = Math.max(
+        8,
+        Math.round(Math.max(meta.width ?? 0, meta.height ?? 0) * 0.04),
+      );
       return await sharp(trimmed)
         .extend({
           top: pad,
@@ -171,7 +176,9 @@ export class ImageProcessingService {
         .toBuffer();
     } catch (err) {
       // trim() throws on fully-transparent/uniform images — store the cutout as-is.
-      this.logger.warn(`Cutout normalization skipped: ${(err as Error).message}`);
+      this.logger.warn(
+        `Cutout normalization skipped: ${(err as Error).message}`,
+      );
       return cutout;
     }
   }
@@ -199,12 +206,20 @@ export class ImageProcessingService {
     try {
       const form = new FormData();
       form.append('size', 'auto');
-      form.append('image_file', new Blob([new Uint8Array(buffer)]), 'image.png');
-      const res = await axios.post<ArrayBuffer>('https://api.remove.bg/v1.0/removebg', form, {
-        headers: { 'X-Api-Key': apiKey },
-        responseType: 'arraybuffer',
-        timeout: 60_000,
-      });
+      form.append(
+        'image_file',
+        new Blob([new Uint8Array(buffer)]),
+        'image.png',
+      );
+      const res = await axios.post<ArrayBuffer>(
+        'https://api.remove.bg/v1.0/removebg',
+        form,
+        {
+          headers: { 'X-Api-Key': apiKey },
+          responseType: 'arraybuffer',
+          timeout: 60_000,
+        },
+      );
       return Buffer.from(res.data);
     } catch (err) {
       this.logger.warn(`remove.bg failed: ${(err as Error).message}`);
