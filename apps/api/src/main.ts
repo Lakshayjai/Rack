@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
@@ -39,7 +39,6 @@ async function bootstrap(): Promise<void> {
 
   const port = config.get<number>('port') ?? 3001;
   await app.listen(port);
-  // eslint-disable-next-line no-console
-  console.log(`API listening on http://localhost:${port}/api`);
+  new Logger('Bootstrap').log(`API listening on http://localhost:${port}/api`);
 }
 void bootstrap();
