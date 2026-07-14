@@ -10,13 +10,10 @@ import { Input, Textarea } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
 import { useAuth } from "@/hooks/useAuth";
-import { CATEGORY_ICONS, CATEGORY_LABELS, PRESET_COLORS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
+import { CATEGORY_ICONS, CATEGORY_LABELS, categoriesFor, subtypesFor } from "@/lib/wardrobe-constants";
+import { ChipRow, ColorSwatchRow, Field, toggleValue } from "@/components/wardrobe/form-fields";
 import { ApiError } from "@/lib/api";
 import { thumb, cn } from "@/lib/utils";
-
-function toggle(list: string[], value: string): string[] {
-  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
-}
 
 /** Edit an existing item's metadata (image is not re-uploaded here). */
 export function EditItemModal({
@@ -83,8 +80,7 @@ export function EditItemModal({
   return (
     <Modal open={item !== null} onOpenChange={onOpenChange} title="Edit item">
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Category</span>
+        <Field label="Category">
           <div className={cn("grid gap-2", categories.length > 5 ? "grid-cols-3 sm:grid-cols-6" : "grid-cols-5")}>
             {categories.map((cat) => {
               const Icon = CATEGORY_ICONS[cat];
@@ -109,53 +105,28 @@ export function EditItemModal({
               );
             })}
           </div>
-        </div>
+        </Field>
 
         {subtypesFor(user?.gender, category).length > 0 && (
-          <div className="flex flex-col gap-2">
-            <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Type</span>
-            <div className="flex flex-wrap gap-2">
-              {subtypesFor(user?.gender, category).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setSubtype((cur) => (cur === t ? null : t))}
-                  className={cn(
-                    "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
-                    subtype === t
-                      ? "border-text-primary bg-text-primary text-bg-primary"
-                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
-                  )}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
+          <Field label="Type">
+            <ChipRow
+              options={subtypesFor(user?.gender, category)}
+              selected={subtype ? [subtype] : []}
+              onToggle={(t) => setSubtype((cur) => (cur === t ? null : t))}
+            />
+          </Field>
         )}
 
-        <div className="flex flex-col gap-2">
-          <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">Colors</span>
-          <div className="flex flex-wrap gap-2">
-            {PRESET_COLORS.map(({ name, hex }) => (
-              <button
-                key={name}
-                type="button"
-                onClick={() => setColors((c) => toggle(c, name))}
-                title={name}
-                aria-label={name}
-                className={cn(
-                  "h-8 w-8 rounded-full border-2 transition-transform hover:scale-110",
-                  colors.includes(name) ? "border-accent-gold" : "border-border",
-                )}
-                style={{ backgroundColor: hex }}
-              />
-            ))}
-          </div>
-        </div>
+        <Field label="Colors">
+          <ColorSwatchRow selected={colors} onToggle={(name) => setColors((c) => toggleValue(c, name))} />
+        </Field>
 
-        <ChipField label="Style" options={[...STYLES]} selected={styles} onToggle={(v) => setStyles((s) => toggle(s, v))} />
-        <ChipField label="Occasion" options={[...OCCASIONS]} selected={occasions} onToggle={(v) => setOccasions((o) => toggle(o, v))} />
+        <Field label="Style">
+          <ChipRow options={[...STYLES]} selected={styles} onToggle={(v) => setStyles((s) => toggleValue(s, v))} />
+        </Field>
+        <Field label="Occasion">
+          <ChipRow options={[...OCCASIONS]} selected={occasions} onToggle={(v) => setOccasions((o) => toggleValue(o, v))} />
+        </Field>
 
         {pairCandidates.length > 0 && (
           <div className="flex flex-col gap-2">
@@ -173,7 +144,7 @@ export function EditItemModal({
                     key={i.id}
                     type="button"
                     title={i.subtype ?? i.category}
-                    onClick={() => setPairedIds((cur) => toggle(cur, i.id))}
+                    onClick={() => setPairedIds((cur) => toggleValue(cur, i.id))}
                     className={cn(
                       "relative h-16 w-16 shrink-0 border bg-white transition-all duration-200",
                       active ? "border-accent-gold shadow-plume" : "border-border opacity-80 hover:opacity-100",
@@ -205,40 +176,5 @@ export function EditItemModal({
         </div>
       </div>
     </Modal>
-  );
-}
-
-function ChipField({
-  label,
-  options,
-  selected,
-  onToggle,
-}: {
-  label: string;
-  options: string[];
-  selected: string[];
-  onToggle: (value: string) => void;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-[11px] uppercase tracking-[0.22em] text-text-secondary">{label}</span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => onToggle(opt)}
-            className={cn(
-              "border px-3.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-all duration-200",
-              selected.includes(opt)
-                ? "border-text-primary bg-text-primary text-bg-primary"
-                : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
-            )}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
   );
 }

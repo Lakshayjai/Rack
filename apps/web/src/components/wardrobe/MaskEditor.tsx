@@ -4,21 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Brush, Eraser, Undo2 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { CHECKER } from "@/components/wardrobe/form-fields";
 import { cn } from "@/lib/utils";
 
 type Tool = "restore" | "erase";
 
 const MAX_UNDO = 12;
-
-/** CSS checkerboard so transparency reads as "removed". */
-const CHECKER: React.CSSProperties = {
-  backgroundImage:
-    "linear-gradient(45deg, #e8e4da 25%, transparent 25%, transparent 75%, #e8e4da 75%), " +
-    "linear-gradient(45deg, #e8e4da 25%, transparent 25%, transparent 75%, #e8e4da 75%)",
-  backgroundSize: "16px 16px",
-  backgroundPosition: "0 0, 8px 8px",
-  backgroundColor: "#f7f4ee",
-};
 
 /**
  * Manual cutout touch-up: paint with "restore" to bring back garment pixels the
