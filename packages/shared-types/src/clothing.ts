@@ -2,7 +2,7 @@
  * Shared clothing domain types, used by both the NestJS API and the Next.js web app.
  */
 
-/** Wardrobe item categories. DRESS is shown only for female users in the UI. */
+/** Wardrobe item categories. DRESS is displayed as the gender-neutral "Full-body" slot (dresses, jumpsuits, co-ord sets). */
 export const CATEGORIES = ['TOP', 'BOTTOM', 'DRESS', 'SHOE', 'ACCESSORY', 'OUTERWEAR'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
