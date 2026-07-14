@@ -25,6 +25,7 @@ const SORT_LABELS: Record<OutfitSort, string> = {
 
 type View = "grid" | "calendar";
 
+/** "The Lookbook": saved outfits as a grid or wear calendar, with detail modal. */
 export default function OutfitsPage() {
   const toast = useToast();
   const { list, markWorn, exportPng, loading } = useOutfits();

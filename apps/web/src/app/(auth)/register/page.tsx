@@ -27,6 +27,7 @@ const GENDER_OPTIONS: { value: Gender; label: string; note: string; icon: typeof
   { value: "female", label: "For Her", note: "dresses · tops · heels", icon: Flower2 },
 ];
 
+/** Signup form: gender preference (tailors categories/types) + credentials. */
 export default function RegisterPage() {
   const router = useRouter();
   const toast = useToast();

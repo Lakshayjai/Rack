@@ -32,6 +32,12 @@ const toArrangeItem = (item: ClothingItem): ArrangeItem => ({
   subtype: item.subtype,
 });
 
+/**
+ * "Composition Room": the Fabric.js outfit designer. Entered three ways —
+ * blank, ?id= to edit a saved outfit, or ?items= from the outfit builder
+ * (pieces are auto-arranged into a flat-lay on load). Saving always exports
+ * a PNG preview for the Lookbook.
+ */
 function DesignerInner() {
   const toast = useToast();
   const params = useSearchParams();

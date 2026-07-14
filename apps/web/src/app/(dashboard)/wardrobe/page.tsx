@@ -15,6 +15,7 @@ import { EditItemModal } from "@/components/wardrobe/EditItemModal";
 import { useWardrobe, type WardrobeFilters } from "@/hooks/useWardrobe";
 import { ApiError } from "@/lib/api";
 
+/** "The Collection": filterable wardrobe grid with upload, edit and delete flows. */
 export default function WardrobePage() {
   const toast = useToast();
   const { items, fetching, fetchItems, deleteItem } = useWardrobe();

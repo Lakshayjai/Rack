@@ -14,6 +14,7 @@ interface UserStats {
   totalWears: number;
 }
 
+/** Profile page: user card, wardrobe stats, and the light/dark theme toggle. */
 export default function SettingsPage() {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();

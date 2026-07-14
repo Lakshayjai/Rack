@@ -18,6 +18,7 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
+/** Login form. Already-authenticated visitors are redirected straight into the app. */
 export default function LoginPage() {
   const router = useRouter();
   const toast = useToast();
