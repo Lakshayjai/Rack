@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Gender, PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
+import { toPublicUser } from './public-user.mapper';
 
 export interface UserStats {
   itemCount: number;
@@ -25,13 +26,6 @@ export class UsersService {
   /** Updates profile preferences (currently the gender that tailors the UI). */
   async updateProfile(userId: string, gender: Gender): Promise<PublicUser> {
     const user = await this.prisma.user.update({ where: { id: userId }, data: { gender } });
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      gender: (user.gender as Gender | null) ?? null,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-    };
+    return toPublicUser(user);
   }
 }

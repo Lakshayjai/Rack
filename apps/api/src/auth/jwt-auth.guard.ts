@@ -2,8 +2,9 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
-import type { Gender, PublicUser } from 'shared-types';
+import type { PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
+import { toPublicUser } from '../users/public-user.mapper';
 
 /**
  * Guards routes by requiring a valid JWT auth cookie (see JwtStrategy).
@@ -51,13 +52,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     this.devUserId = user.id;
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      gender: (user.gender as Gender | null) ?? null,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-    };
+    return toPublicUser(user);
   }
 }

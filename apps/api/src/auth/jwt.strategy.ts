@@ -3,8 +3,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import type { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import type { Gender, JwtPayload, PublicUser } from 'shared-types';
+import type { JwtPayload, PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
+import { toPublicUser } from '../users/public-user.mapper';
 
 /** Reads the JWT from the HTTP-only `access_token` cookie. */
 function cookieExtractor(req: Request): string | null {
@@ -34,13 +35,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      gender: (user.gender as Gender | null) ?? null,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-    };
+    return toPublicUser(user);
   }
 }

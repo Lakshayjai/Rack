@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import type { Gender, JwtPayload, PublicUser } from 'shared-types';
+import type { JwtPayload, PublicUser } from 'shared-types';
 import { PrismaService } from '../prisma/prisma.service';
+import { toPublicUser } from '../users/public-user.mapper';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import type { User } from '@prisma/client';
@@ -19,18 +20,6 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
   ) {}
-
-  /** Strips the password hash before returning a user to any caller. */
-  private toPublicUser(user: User): PublicUser {
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      gender: (user.gender as Gender | null) ?? null,
-      createdAt: user.createdAt.toISOString(),
-      updatedAt: user.updatedAt.toISOString(),
-    };
-  }
 
   /** Signs a JWT carrying the user id + email. */
   signToken(user: Pick<User, 'id' | 'email'>): string {
@@ -48,7 +37,7 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: { email: dto.email, username: dto.username, password: hashed, gender: dto.gender },
     });
-    return this.toPublicUser(user);
+    return toPublicUser(user);
   }
 
   /** Verifies credentials and returns the public user on success. */
@@ -61,6 +50,6 @@ export class AuthService {
     if (!ok) {
       throw new UnauthorizedException('Invalid email or password');
     }
-    return this.toPublicUser(user);
+    return toPublicUser(user);
   }
 }
