@@ -1,20 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsArray, IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 import { CATEGORIES, type Category } from 'shared-types';
-
-function toStringArray({ value }: { value: unknown }): string[] | undefined {
-  if (value === undefined) return undefined;
-  if (Array.isArray(value)) return value.map(String);
-  if (typeof value === 'string') {
-    try {
-      const parsed: unknown = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed.map(String) : [value];
-    } catch {
-      return [value];
-    }
-  }
-  return [];
-}
+import { toOptionalStringArray } from './string-array.transform';
 
 /** Editable metadata fields (JSON PATCH body). All optional. */
 export class UpdateItemDto {
@@ -30,19 +17,19 @@ export class UpdateItemDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @Transform(toStringArray)
+  @Transform(toOptionalStringArray)
   colors?: string[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @Transform(toStringArray)
+  @Transform(toOptionalStringArray)
   styles?: string[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @Transform(toStringArray)
+  @Transform(toOptionalStringArray)
   occasions?: string[];
 
   @IsOptional()
@@ -59,6 +46,6 @@ export class UpdateItemDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @Transform(toStringArray)
+  @Transform(toOptionalStringArray)
   pairedItemIds?: string[];
 }

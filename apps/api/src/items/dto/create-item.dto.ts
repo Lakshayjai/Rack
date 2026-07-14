@@ -7,23 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { CATEGORIES, type Category } from 'shared-types';
-
-/**
- * Parses a value that may arrive either as a real array (JSON PATCH body) or as
- * a JSON-encoded string (multipart form field on upload). Returns [] on failure.
- */
-function toStringArray({ value }: { value: unknown }): string[] {
-  if (Array.isArray(value)) return value.map(String);
-  if (typeof value === 'string' && value.trim() !== '') {
-    try {
-      const parsed: unknown = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed.map(String) : [value];
-    } catch {
-      return [value];
-    }
-  }
-  return [];
-}
+import { toStringArray } from './string-array.transform';
 
 /** Metadata accompanying an image upload (multipart fields or JSON body). */
 export class CreateItemDto {
