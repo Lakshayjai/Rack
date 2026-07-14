@@ -11,12 +11,13 @@ import {
   MousePointerClick,
   Repeat,
 } from "lucide-react";
-import { OUTFIT_TAG_PRESETS, type ClothingItem } from "shared-types";
+import type { ClothingItem } from "shared-types";
 import { CanvasStage } from "@/components/canvas/CanvasStage";
 import { CanvasToolbar } from "@/components/canvas/CanvasToolbar";
 import { CanvasSidebar } from "@/components/canvas/CanvasSidebar";
+import { TagPresetPicker } from "@/components/outfits/TagPresetPicker";
 import { Button } from "@/components/ui/Button";
-import { Input, Textarea } from "@/components/ui/Input";
+import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useWardrobe } from "@/hooks/useWardrobe";
 import { useOutfits } from "@/hooks/useOutfits";
@@ -251,25 +252,7 @@ function DesignerInner() {
               <span className="mr-1 text-[10px] uppercase tracking-[0.2em] text-text-muted">
                 Tags
               </span>
-              {OUTFIT_TAG_PRESETS.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() =>
-                    setTags((cur) =>
-                      cur.includes(tag) ? cur.filter((t) => t !== tag) : [...cur, tag],
-                    )
-                  }
-                  className={cn(
-                    "border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
-                    tags.includes(tag)
-                      ? "border-text-primary bg-text-primary text-bg-primary"
-                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
-                  )}
-                >
-                  {tag}
-                </button>
-              ))}
+              <TagPresetPicker tags={tags} onChange={setTags} />
             </div>
           </div>
         </section>

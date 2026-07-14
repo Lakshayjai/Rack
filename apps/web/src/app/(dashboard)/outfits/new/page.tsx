@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Check, ChevronDown, RotateCcw, Sparkles } from "lucide-react";
 import type { Category, ClothingItem } from "shared-types";
-import { OUTFIT_TAG_PRESETS, arePaired } from "shared-types";
+import { arePaired } from "shared-types";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { TagPresetPicker } from "@/components/outfits/TagPresetPicker";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -297,25 +298,7 @@ export default function NewOutfitPage() {
             />
 
             <div className="flex flex-wrap items-center gap-1.5">
-              {OUTFIT_TAG_PRESETS.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() =>
-                    setTags((cur) =>
-                      cur.includes(tag) ? cur.filter((t) => t !== tag) : [...cur, tag],
-                    )
-                  }
-                  className={cn(
-                    "border px-2.5 py-0.5 text-[10px] uppercase tracking-[0.12em] transition-all duration-200",
-                    tags.includes(tag)
-                      ? "border-text-primary bg-text-primary text-bg-primary"
-                      : "border-border text-text-secondary hover:border-accent-gold hover:text-accent-gold",
-                  )}
-                >
-                  {tag}
-                </button>
-              ))}
+              <TagPresetPicker tags={tags} onChange={setTags} />
             </div>
 
             <div className="flex gap-2">
