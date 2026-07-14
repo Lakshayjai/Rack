@@ -37,3 +37,6 @@ Thumbs.db
 # uploads / temp
 uploads/
 tmp/
+
+# documentation kept local only
+*.md
