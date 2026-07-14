@@ -287,7 +287,8 @@ export const OutfitCanvas = forwardRef<
         return Array.from(new Set(ids));
       },
     }),
-    [],
+    // No dependency array: the handle closes over refs only, so recreating it
+    // per render is free and keeps the exhaustive-deps rule satisfied.
   );
 
   return <canvas ref={elRef} />;

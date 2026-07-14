@@ -16,7 +16,6 @@ import {
 import { ChevronLeft, ChevronRight, Layers } from "lucide-react";
 import type { Outfit } from "shared-types";
 import { Modal } from "@/components/ui/Modal";
-import { thumb } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
