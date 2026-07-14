@@ -34,7 +34,11 @@ export class UploadService implements OnModuleInit {
     );
 
     if (this.cloudinaryEnabled) {
-      cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
+      cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+      });
       this.logger.log('Using Cloudinary for image storage.');
     } else {
       await fs.mkdir(LOCAL_UPLOAD_DIR, { recursive: true });
@@ -52,12 +56,17 @@ export class UploadService implements OnModuleInit {
       : this.uploadToDisk(buffer);
   }
 
-  private async uploadToCloudinary(buffer: Buffer, folder: string): Promise<UploadResult> {
+  private async uploadToCloudinary(
+    buffer: Buffer,
+    folder: string,
+  ): Promise<UploadResult> {
     const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder, resource_type: 'image', format: 'png' },
         (error, res) => {
-          if (error || !res) reject(error ?? new Error('Empty Cloudinary response'));
+          // Cloudinary's error object is a plain shape, not an Error instance.
+          if (error || !res)
+            reject(new Error(error?.message ?? 'Empty Cloudinary response'));
           else resolve(res);
         },
       );
@@ -78,13 +87,21 @@ export class UploadService implements OnModuleInit {
     try {
       if (this.cloudinaryEnabled && url.includes('res.cloudinary.com')) {
         const publicId = this.publicIdFromUrl(url);
-        if (publicId) await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+        if (publicId)
+          await cloudinary.uploader.destroy(publicId, {
+            resource_type: 'image',
+          });
       } else if (url.includes('/uploads/')) {
         const filename = url.split('/uploads/')[1];
-        if (filename) await fs.unlink(join(LOCAL_UPLOAD_DIR, filename)).catch(() => undefined);
+        if (filename)
+          await fs
+            .unlink(join(LOCAL_UPLOAD_DIR, filename))
+            .catch(() => undefined);
       }
     } catch (err) {
-      this.logger.warn(`Failed to delete asset ${url}: ${(err as Error).message}`);
+      this.logger.warn(
+        `Failed to delete asset ${url}: ${(err as Error).message}`,
+      );
     }
   }
 

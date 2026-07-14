@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import type { Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LOCAL_UPLOAD_DIR } from './upload/upload.service';
@@ -21,14 +22,20 @@ async function bootstrap(): Promise<void> {
   // crossOrigin="anonymous" and export/undo without tainting the canvas.
   app.useStaticAssets(LOCAL_UPLOAD_DIR, {
     prefix: '/uploads',
-    setHeaders: (res) => res.setHeader('Access-Control-Allow-Origin', '*'),
+    setHeaders: (res: Response) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    },
   });
 
   app.use(cookieParser());
 
   // Strip unknown properties and coerce DTO types on every request.
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
   );
 
   // Lock CORS to the web origin and allow credentialed (cookie) requests.
